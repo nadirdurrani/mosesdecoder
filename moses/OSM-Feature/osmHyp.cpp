@@ -1,4 +1,9 @@
 #include "osmHyp.h"
+#include <iostream>
+#include <sstream>
+
+
+using namespace std;
 
 osmHypothesis :: osmHypothesis()
 {

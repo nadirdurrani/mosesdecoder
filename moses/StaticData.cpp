@@ -555,6 +555,7 @@ bool StaticData::LoadData(Parameter *parameter)
   if (!LoadTargetWordInsertionFeature()) return false;
   if (!LoadSourceWordDeletionFeature()) return false;
   if (!LoadWordTranslationFeature()) return false;
+  if (!LoadOpSequenceModel()) return false;
 
   // report individual sparse features in n-best list
   if (m_parameter->GetParam("report-sparse-features").size() > 0) {
@@ -2096,6 +2097,15 @@ const string &StaticData::GetBinDirectory() const
 {
   return m_binPath;
 }
+
+#include "OpSequenceModel.h"
+
+bool StaticData::LoadOpSequenceModel()
+{
+  //OpSequenceModel *model = new OpSequenceModel();
+
+}
+
 
 }
 

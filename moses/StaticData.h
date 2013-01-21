@@ -733,6 +733,8 @@ public:
     return m_nBestIncludesSegmentation;
   }
 
+  bool LoadOpSequenceModel();
+
 };
 
 }
