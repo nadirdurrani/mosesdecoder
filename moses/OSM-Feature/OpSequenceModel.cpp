@@ -14,10 +14,10 @@ OpSequenceModel::OpSequenceModel()
 
 }
 
-void OpSequenceModel::Load(const std::string &filePath)
+void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string &operationLM)
 {
   //vector <string> input;
-  ifstream sr (filePath.c_str());
+  ifstream sr (osmFeatureFile.c_str());
   char* tmp;
 
   CHECK(sr.is_open());
@@ -35,8 +35,33 @@ void OpSequenceModel::Load(const std::string &filePath)
     m_coll[pp] = scores;
 
   }
+}
 
+FFState* OpSequenceModel::Evaluate(
+    const Hypothesis& cur_hypo,
+    const FFState* prev_state,
+    ScoreComponentCollection* accumulator) const
+{
+  abort();
+}
 
+FFState* OpSequenceModel::EvaluateChart(
+  const ChartHypothesis& /* cur_hypo */,
+  int /* featureID - used to index the state in the previous hypotheses */,
+  ScoreComponentCollection* accumulator) const
+{
+  abort();
+
+}
+
+const FFState* OpSequenceModel::EmptyHypothesisState(const InputType &input) const
+{
+  abort();
+}
+
+std::string OpSequenceModel::GetScoreProducerWeightShortName(unsigned idx) const
+{
+  abort();
 }
 
 } // namespace

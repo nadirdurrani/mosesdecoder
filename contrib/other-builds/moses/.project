@@ -647,6 +647,11 @@
 			<locationURI>PARENT-3-PROJECT_LOC/moses/NonTerminal.h</locationURI>
 		</link>
 		<link>
+			<name>OSM-Feature</name>
+			<type>2</type>
+			<locationURI>PARENT-3-PROJECT_LOC/moses/OSM-Feature</locationURI>
+		</link>
+		<link>
 			<name>ObjectPool.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/moses/ObjectPool.h</locationURI>

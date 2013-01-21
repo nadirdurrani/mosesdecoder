@@ -74,6 +74,7 @@ class TargetNgramFeature;
 class SyntacticLanguageModel;
 #endif
 class TranslationSystem;
+class OpSequenceModel;
 
 typedef std::pair<std::string, float> UnknownLHSEntry;
 typedef std::vector<UnknownLHSEntry>  UnknownLHSList;
@@ -102,6 +103,8 @@ protected:
 #ifdef HAVE_SYNLM
 	SyntacticLanguageModel* m_syntacticLanguageModel;
 #endif
+	OpSequenceModel *m_osmModel;
+
   std::vector<DecodeGraph*> m_decodeGraphs;
   std::vector<size_t> m_decodeGraphBackoff;
   // Initial	= 0 = can be used when creating poss trans

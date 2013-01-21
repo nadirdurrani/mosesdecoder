@@ -52,6 +52,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "InputFileStream.h"
 #include "BleuScoreFeature.h"
 #include "ScoreComponentCollection.h"
+#include "OSM-Feature/OpSequenceModel.h"
 
 #ifdef HAVE_SYNLM
 #include "SyntacticLanguageModel.h"
@@ -2098,12 +2099,10 @@ const string &StaticData::GetBinDirectory() const
   return m_binPath;
 }
 
-#include "OpSequenceModel.h"
-
 bool StaticData::LoadOpSequenceModel()
 {
-  //OpSequenceModel *model = new OpSequenceModel();
-
+  m_osmModel = new OpSequenceModel();
+  m_osmModel->Load("featureOnTrain", "operationLM9");
 }
 
 
