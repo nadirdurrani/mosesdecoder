@@ -31,9 +31,7 @@ void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string 
 
     ParallelPhrase pp(tokens[0], tokens[1]);
     Scores scores = Tokenize<float>(tokens[2], " ");
-
     m_coll[pp] = scores;
-
   }
 }
 

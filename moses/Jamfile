@@ -33,6 +33,7 @@ lib moses :
   TranslationModel/RuleTable/*.cpp
   TranslationModel/Scope3Parser/*.cpp
   TranslationModel/CYKPlusParser/*.cpp
+  OSM-Feature/*.cpp
 : #exceptions
   ThreadPool.cpp
   SyntacticLanguageModel.cpp

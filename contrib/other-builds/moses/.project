@@ -657,16 +657,6 @@
 			<locationURI>PARENT-3-PROJECT_LOC/moses/ObjectPool.h</locationURI>
 		</link>
 		<link>
-			<name>OpSequenceModel.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/moses/OpSequenceModel.cpp</locationURI>
-		</link>
-		<link>
-			<name>OpSequenceModel.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/moses/OpSequenceModel.h</locationURI>
-		</link>
-		<link>
 			<name>OutputCollector.h</name>
 			<type>1</type>
 			<locationURI>PARENT-3-PROJECT_LOC/moses/OutputCollector.h</locationURI>
