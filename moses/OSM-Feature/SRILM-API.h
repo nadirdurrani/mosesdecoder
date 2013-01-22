@@ -2,6 +2,7 @@
 #define API
 
 #include "Ngram.h"
+#include <vector>
 
 using namespace std;
 
@@ -16,8 +17,8 @@ class Api
 	float lm_logprobContext( const VocabString word, const VocabString *context );
 	float lm_logprobSent( const VocabString *sentence );
 	double contextProb(char *, int & );
-	double contextProbN (vector <int> , int &);
-	unsigned backOffLength (vector <int>);
+	double contextProbN (std::vector <int> , int &);
+	unsigned backOffLength (std::vector <int>);
 
 	double sentProb(char *) ;
 	int getLMID(char *);

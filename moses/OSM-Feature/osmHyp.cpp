@@ -1,4 +1,5 @@
 #include "osmHyp.h"
+#include <sstream>
 
 osmHypothesis :: osmHypothesis()
 {
