@@ -32,7 +32,7 @@ namespace Moses
 
 class AlignmentInfoCollection;
 
-/** Collection of non-terminal alignment pairs, ordered by source index.
+/** Collection of terminal or non-terminal alignment pairs, ordered by source index.
   * Usually held by a TargetPhrase to map non-terms in hierarchical/syntax models
  */
 class AlignmentInfo
