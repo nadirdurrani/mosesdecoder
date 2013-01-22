@@ -1,8 +1,7 @@
-#ifndef PHRASE
-#define PHRASE
+#pragma once
 
-#include "osmHyp.cpp"
-#include "SRILM-API.cpp"
+#include "osmHyp.h"
+#include "SRILM-API.h"
 
 class Phrase
 {
@@ -32,5 +31,5 @@ class Phrase
 	
 };
 
-#endif
+
 

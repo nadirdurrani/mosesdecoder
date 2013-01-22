@@ -1,5 +1,4 @@
-#ifndef API
-#define API
+#pragma once
 
 #include "Ngram.h"
 #include <vector>
@@ -29,4 +28,4 @@ class Api
 
 };
 
-#endif
+

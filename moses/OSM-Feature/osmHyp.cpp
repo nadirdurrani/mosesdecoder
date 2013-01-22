@@ -10,8 +10,9 @@ osmState::osmState()
   history.push_back("<s>");
 }
 
-int osmState::Compare(const osmState& other) const
+int osmState::Compare(const FFState& otherBase) const
 {
+  const osmState &other = static_cast<const osmState&>(otherBase);
   if (j != other.j)
     return (j < other.j) ? -1 : +1;
   if (E != other.E)

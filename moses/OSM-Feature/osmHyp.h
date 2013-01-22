@@ -1,5 +1,5 @@
-#ifndef OSMHYPOTHESIS
-#define OSMHYPOTHESIS
+#pragma once
+
 # include "SRILM-API.h"
 # include "moses/FFState.h"
 # include <set>
@@ -16,7 +16,7 @@ class osmState : public FFState
 {
 public:
   osmState();
-  int Compare(const osmState& other) const;
+  int Compare(const FFState& other) const;
 protected:
   int j, E;
   std::map <int,std::string> gap;
@@ -55,5 +55,5 @@ class osmHypothesis
 
 } // namespace
 
-#endif
+
 

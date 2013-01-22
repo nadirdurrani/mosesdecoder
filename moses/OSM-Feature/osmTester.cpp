@@ -390,7 +390,7 @@ void lmInit(int order , Api & ptrOp)
 	//delete [] LM;
 }
 
-
+/*
 int main(int argc, char * argv[])
 {
 
@@ -427,3 +427,4 @@ int main(int argc, char * argv[])
 	}	
 
 }
+*/
