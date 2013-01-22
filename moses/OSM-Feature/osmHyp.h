@@ -1,19 +1,16 @@
 #ifndef OSMHYPOTHESIS
 #define OSMHYPOTHESIS
+# include "SRILM-API.h"
 
-#include <string>
-#include <vector>
-#include <map>
-#include <set>
-
+using namespace std;
 
 class osmHypothesis
 {
 
 	private:
 	
-	std::vector <std::string> operations;	// List of operations required to generated this hyp ...
-	std::map <int,std::string> gap;	// Maintains gap history ...
+	vector <string> operations;	// List of operations required to generated this hyp ...
+	map <int,string> gap;	// Maintains gap history ...
 	int j;	// Position after the last source word generated ...
 	int E; // Position after the right most source word so far generated ...
 	int gapCount; // Number of gaps inserted ...
@@ -22,17 +19,17 @@ class osmHypothesis
 	int gapWidth;	
 	double opProb;
 
-	int closestGap(std::map <int,std::string> gap,int j1, int & gp);
-	int firstOpenGap(std::vector <int> & coverageVector);
-	std::string intToString(int);
+	int closestGap(map <int,string> gap,int j1, int & gp);
+	int firstOpenGap(vector <int> & coverageVector);
+	string intToString(int);
 	int  getOpenGaps();
  
 	public:
 
 	osmHypothesis();
 	~osmHypothesis(){};
-	void generateOperations(int j1 , int contFlag , std::vector <int> & coverageVector , std::string english , std::string german , std::set <int> & targetNullWords , std::vector <std::string> & currF);
-	void calculateOpProb(std::vector <std::string> & history);
+	void generateOperations(int j1 , int contFlag , vector <int> & coverageVector , string english , string german , set <int> & targetNullWords , vector <string> & currF);
+	void calculateOSMProb(Api & opPtr , vector <string> & history , int order);
 	void print();
 };
 

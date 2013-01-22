@@ -1,9 +1,4 @@
 #include "osmHyp.h"
-#include <iostream>
-#include <sstream>
-
-
-using namespace std;
 
 osmHypothesis :: osmHypothesis()
 {
@@ -17,9 +12,38 @@ osmHypothesis :: osmHypothesis()
 	E = 0;
 }
 
-void osmHypothesis :: calculateOpProb(vector <string> & history)
+void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & history , int order)
 {
 	
+	opProb = 0;
+	vector <int> numbers;
+	vector <int> context;
+	int nonWordFlag  = 0;
+	double temp;
+
+	for (int i=0; i< operations.size(); i++)
+		numbers.push_back(ptrOp.getLMID(const_cast <char *> (operations[i].c_str())));
+
+	for (int i=0; i< history.size(); i++)
+		context.push_back(ptrOp.getLMID(const_cast <char *> (history[i].c_str())));
+
+	for (int i = 0; i<operations.size(); i++)
+	{
+		//cout<<opSeq[i]<<endl;
+		context.push_back(numbers[i]);
+		//cout<<"Context Size "<<context.size()<<endl;
+		if (context.size() > order)
+		{
+			context.erase(context.begin());
+		}
+		
+		temp = ptrOp.contextProbN(context,nonWordFlag);		   
+		opProb = opProb + temp;
+		
+		 //cout<<temp<<" "<<opProb<<endl;
+	
+	}
+
 
 }
 
@@ -180,11 +204,13 @@ void osmHypothesis :: print()
 
 	cout<<endl<<endl;
 	
+	cout<<"Operation Probability "<<opProb<<endl;
 	cout<<"Gap Count "<<gapCount<<endl;
 	cout<<"Open Gap Count "<<openGapCount<<endl;
 	cout<<"Gap Width "<<gapWidth<<endl;
 	cout<<"Deletion Count "<<deletionCount<<endl;
 
+	cout<<"_______________"<<endl;
 }
 
 int osmHypothesis :: closestGap(map <int,string> gap, int j1, int & gp)

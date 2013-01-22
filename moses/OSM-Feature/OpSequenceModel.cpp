@@ -12,7 +12,31 @@ OpSequenceModel::OpSequenceModel()
 :StatefulFeatureFunction("OpSequenceModel", 1 )
 {
 
+	LanguageModel = NULL;
 }
+
+void OpSequenceModel :: readLanguageModel( char *lmFile,int order)
+{
+	
+  setlocale(LC_CTYPE, "");
+  setlocale(LC_COLLATE, "");
+
+  Vocab *vocab = new Vocab;
+   vocab->unkIsWord() = true; /* vocabulary contains unknown word tag */
+
+  LanguageModel = new Ngram( *vocab,order );
+  assert(LanguageModel != 0);
+  // LanguageModel->debugme(0);
+
+  File file( lmFile, "r" );
+  if (!LanguageModel->read( file )) {
+    cerr << "format error in lm file\n";
+    exit(1);
+  }
+
+  file.close();
+}
+
 
 void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string &operationLM)
 {

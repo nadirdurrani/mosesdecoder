@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include "moses/FeatureFunction.h"
+#include "Ngram.h"
 
 namespace Moses
 {
@@ -10,7 +11,12 @@ namespace Moses
 class OpSequenceModel : public StatefulFeatureFunction
 {
 public:
+
+	LM *LanguageModel;
+
 	OpSequenceModel();
+
+	void readLanguageModel(char *,int);
 
 	void Load(const std::string &osmFeatureFile, const std::string &operationLM);
 

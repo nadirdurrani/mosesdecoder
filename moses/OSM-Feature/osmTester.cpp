@@ -6,43 +6,14 @@
 #include <vector>
 #include <set>
 #include <sstream>
-#include "osmHyp.cpp"
+#include "osmTester.h"
 
 using namespace std;
 
-class Phrase
-{
 
-	public :
-	
-	Phrase(){currE.clear(), currF.clear(), ceptsInPhrase.clear(), targetNullWords.clear();};
-	~Phrase(){};
-	void getPhraseInFormat(int startIndex , string t);
-	void computeOSMFeature(int startIndex , vector <int> & coverageVector);
-	
-	private :
-
-	vector <string> currE;
-	vector <string> currF;
-	vector < pair < set <int> , set <int> > > ceptsInPhrase;
-	set <int> targetNullWords;
-	
-	void getWords(string inp, vector <string> & currInput);
-	void alignmentFormat(string input, vector <string> & a);
-	void readPhrases(string input, string & e, string & f, vector <string> & a);
-	void getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , vector <int> > & tS , map <int , vector <int> > & sT);
-
-	void print();
-	void constructCepts(int startIndex , vector <string> & alignment);	
-	int stringToInteger(string s);
-	
-};
-
-
-void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector)
+void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector , Api & ptrOp , vector <string> & history , int order)
 {
 	
-
 	set <int> eSide;
 	set <int> fSide;
 	set <int> :: iterator iter;
@@ -111,6 +82,7 @@ void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector)
 				
 	}	
 
+	ptr->calculateOSMProb(ptrOp , history , order);
 	ptr->print();
 	delete ptr;
 
@@ -407,17 +379,36 @@ void loadInput(char * fileName, vector <string> & input)
 }
 
 
+void lmInit(int order , Api & ptrOp)
+{
+
+	char * LM = new char[strlen("operationLM9")+1];
+	strcpy(LM,"operationLM9");
+	//ptrOp = new Api;
+	ptrOp.read_lm(LM,order);
+	//delete [] LM;
+}
+
+
 int main(int argc, char * argv[])
 {
 
-	vector <string> input;
-	string t;
+	Api ptrOp;
 	
+	vector <string> input;
+	vector <string> history;
+	history.push_back("_INS_daran");
+	history.push_back("_INS_zu");
+
+	string t;
+	int order = 9;
+
 	loadInput(argv[1],input);
+	lmInit(order , ptrOp);
+
 	map <string , Phrase> phrases;
 	
 	vector <int> coverageVector;
-	
 
 	for(int i=0; i<input.size()-1; i++)
 	{
@@ -429,10 +420,9 @@ int main(int argc, char * argv[])
 		cout<<i<<" "<<t<<endl<<endl;
 		
 		ptr->getPhraseInFormat(0 , t);
-		ptr->computeOSMFeature(0,coverageVector);
-
+		ptr->computeOSMFeature(0,coverageVector, ptrOp , history , order);
+		
 		delete ptr;
 	}	
-	
-	
+
 }
