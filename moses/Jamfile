@@ -40,7 +40,9 @@ lib moses :
   *Test.cpp Mock*.cpp
 ]
 headers LM//LM TranslationModel/CompactPT//CompactPT synlm ThreadPool rt
-..//search ../util/double-conversion//double-conversion ..//z ../OnDiskPt//OnDiskPt ;
+..//search ../util/double-conversion//double-conversion ..//z ../OnDiskPt//OnDiskPt
+LM//compile-with-sri
+ ;
 
 alias headers-to-install : [ glob-tree *.h ] ;
 
