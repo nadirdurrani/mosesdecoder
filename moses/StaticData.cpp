@@ -2103,6 +2103,12 @@ bool StaticData::LoadOpSequenceModel()
 {
   m_osmModel = new OpSequenceModel();
   m_osmModel->Load("featureOnTrain", "operationLM9");
+
+  vector<float> weights;
+  weights.push_back(45454.5);
+  SetWeights(m_osmModel,weights);
+
+  return true;
 }
 
 

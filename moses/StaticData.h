@@ -738,6 +738,8 @@ public:
 
   bool LoadOpSequenceModel();
 
+  const OpSequenceModel *GetOpSequenceModel() const
+  { return m_osmModel; }
 };
 
 }

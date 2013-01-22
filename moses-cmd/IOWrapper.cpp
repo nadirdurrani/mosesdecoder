@@ -45,6 +45,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "moses/DummyScoreProducers.h"
 #include "moses/FeatureVector.h"
 #include "moses/InputFileStream.h"
+#include "moses/OSM-Feature/OpSequenceModel.h"
 #include "IOWrapper.h"
 
 using namespace std;
@@ -426,6 +427,16 @@ void OutputNBest(std::ostream& out, const Moses::TrellisPathList &nBestList, con
 	  }
 	  out << " " << scores[j];
 	}
+      }
+    }
+
+    // output osm feature
+    const OpSequenceModel *osmModel = staticData.GetOpSequenceModel();
+    if (osmModel) {
+      out << " " << osmModel->GetScoreProducerWeightShortName() << ":";
+      vector<float> scores = path.GetScoreBreakdown().GetScoresForProducer( osmModel );
+      for (size_t i = 0; i < scores.size(); ++i) {
+        out << scores[i] << " ";
       }
     }
 
