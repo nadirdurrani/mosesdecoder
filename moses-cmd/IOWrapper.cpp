@@ -433,8 +433,7 @@ void OutputNBest(std::ostream& out, const Moses::TrellisPathList &nBestList, con
     // output osm feature
     const OpSequenceModel *osmModel = staticData.GetOpSequenceModel();
     if (osmModel) {
-      //out << " " << osmModel->GetScoreProducerWeightShortName() << ":";
-      out << " osm: ";
+      out << " " << osmModel->GetScoreProducerWeightShortName() << ": ";
       vector<float> scores = path.GetScoreBreakdown().GetScoresForProducer( osmModel );
       for (size_t i = 0; i < scores.size(); ++i) {
         out << scores[i] << " ";

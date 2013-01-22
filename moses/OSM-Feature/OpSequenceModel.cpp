@@ -64,7 +64,8 @@ FFState* OpSequenceModel::Evaluate(
     const FFState* prev_state,
     ScoreComponentCollection* accumulator) const
 {
-  abort();
+  cerr << "OpSequenceModel::Evaluate()" << endl;
+  return NULL;
 }
 
 FFState* OpSequenceModel::EvaluateChart(
@@ -83,7 +84,7 @@ const FFState* OpSequenceModel::EmptyHypothesisState(const InputType &input) con
 
 std::string OpSequenceModel::GetScoreProducerWeightShortName(unsigned idx) const
 {
-  abort();
+  return "osm";
 }
 
 } // namespace
