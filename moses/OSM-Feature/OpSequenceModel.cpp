@@ -9,7 +9,7 @@ namespace Moses
 {
 
 OpSequenceModel::OpSequenceModel()
-:StatefulFeatureFunction("OpSequenceModel", 1 )
+:StatefulFeatureFunction("OpSequenceModel", 5 )
 {
 
 	LanguageModel = NULL;

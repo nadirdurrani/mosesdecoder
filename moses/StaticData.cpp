@@ -92,6 +92,7 @@ StaticData::StaticData()
   ,m_phraseLengthFeature(NULL)
   ,m_targetWordInsertionFeature(NULL)
   ,m_sourceWordDeletionFeature(NULL)
+  ,m_osmModel(NULL)
   ,m_numLinkParams(1)
   ,m_fLMsLoaded(false)
   ,m_sourceStartPosMattersForRecombination(false)
@@ -2105,7 +2106,12 @@ bool StaticData::LoadOpSequenceModel()
   m_osmModel->Load("featureOnTrain", "operationLM9");
 
   vector<float> weights;
-  weights.push_back(45454.5);
+  weights.push_back(1.5);
+  weights.push_back(2.5);
+  weights.push_back(3.5);
+  weights.push_back(4.5);
+  weights.push_back(5.5);
+
   SetWeights(m_osmModel,weights);
 
   return true;

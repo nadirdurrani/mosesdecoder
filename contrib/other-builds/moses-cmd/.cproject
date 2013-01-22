@@ -27,6 +27,7 @@
 								<option id="gnu.cpp.compiler.option.include.paths.2118465683" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/opt/local/include/"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}/../../boost/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc}/../../srilm/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc}/../..&quot;"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.849384962" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
@@ -73,6 +74,13 @@
 									<listOptionValue builtIn="false" value="lm"/>
 									<listOptionValue builtIn="false" value="util"/>
 									<listOptionValue builtIn="false" value="rt"/>
+								</option>
+								<option id="gnu.cpp.link.option.userobjs.1499045896" superClass="gnu.cpp.link.option.userobjs" valueType="userObjs">
+									<listOptionValue builtIn="false" value="/home/hieu/workspace/github/hieuhoang/srilm/lib/i686/libdstruct.a"/>
+									<listOptionValue builtIn="false" value="/home/hieu/workspace/github/hieuhoang/srilm/lib/i686/libflm.a"/>
+									<listOptionValue builtIn="false" value="/home/hieu/workspace/github/hieuhoang/srilm/lib/i686/liblattice.a"/>
+									<listOptionValue builtIn="false" value="/home/hieu/workspace/github/hieuhoang/srilm/lib/i686/libmisc.a"/>
+									<listOptionValue builtIn="false" value="/home/hieu/workspace/github/hieuhoang/srilm/lib/i686/liboolm.a"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.983725033" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
