@@ -1,6 +1,23 @@
 #include "osmHyp.h"
 #include <sstream>
 
+namespace Moses
+{
+
+int osmState::Compare(const osmState& other) const
+{
+  if (j != other.j)
+    return (j < other.j) ? -1 : +1;
+  if (E != other.E)
+    return (E < other.E) ? -1 : +1;
+  if (gap != other.gap)
+    return (gap < other.gap) ? -1 : +1;
+  if (history != other.history)
+    return (history < other.history) ? -1 : +1;
+
+  return 0;
+}
+
 osmHypothesis :: osmHypothesis()
 {
 	opProb = 0;
@@ -13,7 +30,7 @@ osmHypothesis :: osmHypothesis()
 	E = 0;
 }
 
-void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & history , int order)
+void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & hist , int order)
 {
 	
 	opProb = 0;
@@ -25,17 +42,19 @@ void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & history ,
 	for (int i=0; i< operations.size(); i++)
 		numbers.push_back(ptrOp.getLMID(const_cast <char *> (operations[i].c_str())));
 
-	for (int i=0; i< history.size(); i++)
-		context.push_back(ptrOp.getLMID(const_cast <char *> (history[i].c_str())));
+	for (int i=0; i< hist.size(); i++)
+		context.push_back(ptrOp.getLMID(const_cast <char *> (hist[i].c_str())));
 
 	for (int i = 0; i<operations.size(); i++)
 	{
 		//cout<<opSeq[i]<<endl;
 		context.push_back(numbers[i]);
+		hist.push_back(operations[i]);
 		//cout<<"Context Size "<<context.size()<<endl;
 		if (context.size() > order)
 		{
 			context.erase(context.begin());
+			hist.erase(hist.begin());
 		}
 		
 		temp = ptrOp.contextProbN(context,nonWordFlag);		   
@@ -45,7 +64,12 @@ void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & history ,
 	
 	}
 
+	if (hist.size() > order-1)
+	{
+	      hist.erase(hist.begin());
+	}
 
+	  history = hist;
 }
 
 
@@ -279,4 +303,6 @@ int osmHypothesis :: getOpenGaps()
 	return nd;
 
 }
+
+} // namespace
 

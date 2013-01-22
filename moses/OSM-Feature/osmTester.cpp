@@ -9,6 +9,7 @@
 #include "osmTester.h"
 
 using namespace std;
+using namespace Moses;
 
 
 void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector , Api & ptrOp , vector <string> & history , int order)
