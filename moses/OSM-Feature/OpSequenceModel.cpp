@@ -65,6 +65,9 @@ FFState* OpSequenceModel::Evaluate(
     const FFState* prev_state,
     ScoreComponentCollection* accumulator) const
 {
+  cur_hypo.GetCurrTargetPhrase();
+  const Sentence &sentence = static_cast<const Sentence&>(curr_hypo.GetManager().GetSource());
+
   cerr << "OpSequenceModel::Evaluate()" << endl;
   return NULL;
 }
