@@ -717,6 +717,9 @@ bool StaticData::LoadData(Parameter *parameter)
       for (size_t i=0; i < m_globalLexicalModelsUnlimited.size(); ++i)
     	m_translationSystems.find(config[0])->second.AddFeatureFunction(m_globalLexicalModelsUnlimited[i]);
     }
+    if (m_osmModel) {
+      m_translationSystems.find(config[0])->second.AddFeatureFunction(m_osmModel);
+    }
   }
 
   //Load extra feature weights

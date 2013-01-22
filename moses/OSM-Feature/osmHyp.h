@@ -15,6 +15,7 @@ namespace Moses
 class osmState : public FFState
 {
 public:
+  osmState();
   int Compare(const osmState& other) const;
 protected:
   int j, E;

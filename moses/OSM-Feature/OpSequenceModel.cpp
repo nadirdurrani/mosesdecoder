@@ -1,5 +1,6 @@
 #include <fstream>
 #include "OpSequenceModel.h"
+#include "osmHyp.h"
 #include "util/check.hh"
 #include "moses/Util.h"
 
@@ -79,7 +80,8 @@ FFState* OpSequenceModel::EvaluateChart(
 
 const FFState* OpSequenceModel::EmptyHypothesisState(const InputType &input) const
 {
-  abort();
+  cerr << "OpSequenceModel::EmptyHypothesisState()" << endl;
+  return new osmState();
 }
 
 std::string OpSequenceModel::GetScoreProducerWeightShortName(unsigned idx) const

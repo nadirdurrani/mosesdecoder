@@ -3,6 +3,12 @@
 
 namespace Moses
 {
+osmState::osmState()
+:j(0)
+,E(0)
+{
+  history.push_back("<s>");
+}
 
 int osmState::Compare(const osmState& other) const
 {
