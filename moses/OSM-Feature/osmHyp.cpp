@@ -108,35 +108,18 @@ string osmHypothesis :: intToString(int num)
 
 }
 
-void osmHypothesis :: generateOperations(int j1 , int contFlag , vector <int> & coverageVector , string english , string german , set <int> & targetNullWords , vector <string> & currF)
+void osmHypothesis :: generateOperations(int & startIndex , int j1 , int contFlag , WordsBitmap & coverageVector , string english , string german , set <int> & targetNullWords , vector <string> & currF)
 {
 	
 	int gFlag = 0;
 	int gp = 0; 	
 	int ans;
 	
-	if (english == "_INS_")	// Case : Delete the source word ...
-	{
-		operations.push_back("_INS_" + german);
-		
-		ans = firstOpenGap(coverageVector);
-		
-		if (ans != -1)
-		 gapWidth += j - ans;
-		
-		coverageVector[j]=1;
-		j++;
 
-		if (E < j)
-		   E = j;
-
-		deletionCount++;
-	}
-	else
-	{
 		if ( j < j1) // j1 is the index of the source word we are about to generate ...
 		{
-			if(coverageVector[j]==0) // if source word at j is not genrated yet ...
+			//if(coverageVector[j]==0) // if source word at j is not generated yet ...
+			if(coverageVector.GetValue(j)==0) // if source word at j is not generated yet ...
 			{
 				operations.push_back("_INS_GAP_");
 				gFlag++;
@@ -155,7 +138,8 @@ void osmHypothesis :: generateOperations(int j1 , int contFlag , vector <int> & 
 		
 		if (j1 < j)
 		{
-			if(j < E && coverageVector[j]==0)
+			// if(j < E && coverageVector[j]==0)
+			if(j < E && coverageVector.GetValue(j)==0)
 			{
 				operations.push_back("_INS_GAP_");
 				gFlag++;
@@ -192,35 +176,47 @@ void osmHypothesis :: generateOperations(int j1 , int contFlag , vector <int> & 
 				operations.push_back("_TRANS_" + english + "_TO_" + german);
 			}
 
-			ans = firstOpenGap(coverageVector);
+			//ans = firstOpenGap(coverageVector);
+			ans = coverageVector.GetFirstGapPos();
 		
 			if (ans != -1)
 		 		gapWidth += j - ans;
 
+		}
+		else if (contFlag == 2)
+		{
+
+			operations.push_back("_INS_" + german);
+			ans = coverageVector.GetFirstGapPos();
+
+			if (ans != -1)
+				gapWidth += j - ans;
+			deletionCount++;
 		}
 		else
 		{
 			operations.push_back("_CONT_CEPT_");
 		}
 
-		coverageVector[j]=1;
+		//coverageVector[j]=1;
+		coverageVector.SetValue(j,1);
 		j+=1;
 		
 		if(E<j)
 		  E=j;
-	}
 
 	if (gFlag > 0)
 		gapCount++;
 
 	openGapCount += getOpenGaps();
 
-	if (coverageVector[j] == 0 && targetNullWords.find(j) != targetNullWords.end())
+	//if (coverageVector[j] == 0 && targetNullWords.find(j) != targetNullWords.end())
+	if (coverageVector.GetValue(j) == 0 && targetNullWords.find(j) != targetNullWords.end())
 	{
 		j1 = j;
-		german = currF[j1];
+		german = currF[j1-startIndex];
 		english = "_INS_";
-		generateOperations(j1, 0 , coverageVector , english , german , targetNullWords , currF);
+		generateOperations(startIndex, j1, 2 , coverageVector , english , german , targetNullWords , currF);
 	}
 
 	//print();
@@ -230,19 +226,19 @@ void osmHypothesis :: print()
 {
 	for (int i = 0; i< operations.size(); i++)
 	{
-		cout<<operations[i]<<" ";
+		cerr<<operations[i]<<" ";
 
 	}
 
-	cout<<endl<<endl;
+	cerr<<endl<<endl;
 	
-	cout<<"Operation Probability "<<opProb<<endl;
-	cout<<"Gap Count "<<gapCount<<endl;
-	cout<<"Open Gap Count "<<openGapCount<<endl;
-	cout<<"Gap Width "<<gapWidth<<endl;
-	cout<<"Deletion Count "<<deletionCount<<endl;
+	cerr<<"Operation Probability "<<opProb<<endl;
+	cerr<<"Gap Count "<<gapCount<<endl;
+	cerr<<"Open Gap Count "<<openGapCount<<endl;
+	cerr<<"Gap Width "<<gapWidth<<endl;
+	cerr<<"Deletion Count "<<deletionCount<<endl;
 
-	cout<<"_______________"<<endl;
+	cerr<<"_______________"<<endl;
 }
 
 int osmHypothesis :: closestGap(map <int,string> gap, int j1, int & gp)

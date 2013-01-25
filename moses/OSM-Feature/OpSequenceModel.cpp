@@ -3,6 +3,9 @@
 #include "osmHyp.h"
 #include "util/check.hh"
 #include "moses/Util.h"
+#include "moses/OSM-Feature/osmTester.h"
+
+
 
 using namespace std;
 
@@ -13,17 +16,23 @@ OpSequenceModel::OpSequenceModel()
 :StatefulFeatureFunction("OpSequenceModel", 5 )
 {
 
-	LanguageModel = NULL;
+
+
+	//LanguageModel = NULL;
 }
 
-void OpSequenceModel :: readLanguageModel( char *lmFile,int order)
+void OpSequenceModel :: readLanguageModel(const char *lmFile)
 {
-	
+
+
+	ptrOp = new Api;
+	ptrOp -> read_lm(lmFile,lmOrder);
+/*
   setlocale(LC_CTYPE, "");
   setlocale(LC_COLLATE, "");
 
   Vocab *vocab = new Vocab;
-   vocab->unkIsWord() = true; /* vocabulary contains unknown word tag */
+   vocab->unkIsWord() = true; // vocabulary contains unknown word tag
 
   LanguageModel = new Ngram( *vocab,order );
   assert(LanguageModel != 0);
@@ -36,11 +45,14 @@ void OpSequenceModel :: readLanguageModel( char *lmFile,int order)
   }
 
   file.close();
+  */
 }
 
 
-void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string &operationLM)
+void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string &operationLM , int orderVal)
 {
+
+   lmOrder= orderVal;
   //vector <string> input;
   ifstream sr (osmFeatureFile.c_str());
   char* tmp;
@@ -58,17 +70,93 @@ void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string 
     Scores scores = Tokenize<float>(tokens[2], " ");
     m_coll[pp] = scores;
   }
+
+  readLanguageModel(operationLM.c_str());
+
 }
+
+
 
 FFState* OpSequenceModel::Evaluate(
     const Hypothesis& cur_hypo,
     const FFState* prev_state,
     ScoreComponentCollection* accumulator) const
 {
-  //cur_hypo.GetCurrTargetPhrase();
+  const TargetPhrase &target = cur_hypo.GetCurrTargetPhrase();
+  const WordsBitmap &bitmap = cur_hypo.GetWordsBitmap();
+  WordsBitmap myBitmap = bitmap;
+  const Manager &manager = cur_hypo.GetManager();
+  const InputType &source = manager.GetSource();
+  const Sentence &sourceSentence = static_cast<const Sentence&>(source);
+  OSMPhrase obj;
+  vector <string> mySourcePhrase;
+  vector <string> myTargetPhrase;
+  vector <string> history;
+
+  //target.GetWord(0)
+
+  cerr << target <<" --- "<<target.GetSourcePhrase()<< endl;  // English ...
+
+  //cerr << align << endl;   // Alignments ...
+  //cerr << cur_hypo.GetCurrSourceWordsRange() << endl;
+
+  //cerr << source <<endl;
+
+ // int a = sourceRange.GetStartPos();
+ // cerr << source.GetWord(a);
+  //cerr <<a<<endl;
+
+
+
+
   //const Sentence &sentence = static_cast<const Sentence&>(curr_hypo.GetManager().GetSource());
 
-  cerr << "OpSequenceModel::Evaluate()" << endl;
+
+   const WordsRange & sourceRange = cur_hypo.GetCurrSourceWordsRange();
+   int startIndex  = sourceRange.GetStartPos();
+   int endIndex = sourceRange.GetEndPos();
+   const AlignmentInfo &align = cur_hypo.GetCurrTargetPhrase().GetAlignTerm();
+   vector <int> alignments;
+
+
+
+   AlignmentInfo::const_iterator iter;
+
+      for (iter = align.begin(); iter != align.end(); ++iter) {
+        //cerr << iter->first << "----" << iter->second << " ";
+    	 alignments.push_back(iter->first);
+    	 alignments.push_back(iter->second);
+      }
+
+
+   cerr<<bitmap<<endl;
+   //cerr<<startIndex<<" "<<endIndex<<endl;
+
+
+  for (int i = startIndex; i <= endIndex; i++)
+  {
+	  myBitmap.SetValue(i,0); // resetting coverage of this phrase ...
+	 mySourcePhrase.push_back(source.GetWord(i).GetFactor(0)->GetString());
+	 // cerr<<mySourcePhrase[i]<<endl;
+  }
+
+  for (int i = 0; i < target.GetSize(); i++)
+  {
+	  myTargetPhrase.push_back(target.GetWord(i).GetFactor(0)->GetString());
+	  //cerr<<myTargetPhrase[i]<<endl;
+  }
+
+  //cerr<<myBitmap<<endl;
+
+  int xx;
+
+  obj.constructCepts(alignments,startIndex,endIndex);
+  obj.setPhrases(mySourcePhrase , myTargetPhrase);
+  obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,history,lmOrder);
+  cin>>xx;
+
+
+
   return NULL;
 }
 

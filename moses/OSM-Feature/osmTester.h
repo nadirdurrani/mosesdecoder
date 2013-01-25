@@ -2,17 +2,24 @@
 
 #include "osmHyp.h"
 #include "SRILM-API.h"
+#include "moses/Manager.h"
 
-class Phrase
+namespace Moses
+{
+
+class OSMPhrase
 {
 
 	public :
 	
-	Phrase(){currE.clear(), currF.clear(), ceptsInPhrase.clear(), targetNullWords.clear();};
-	~Phrase(){};
-	void getPhraseInFormat(int startIndex , string t);
-	void computeOSMFeature(int startIndex , vector <int> & coverageVector , Api & opPtr , vector <string> & history , int order);
-	
+	OSMPhrase(){currE.clear(), currF.clear(), ceptsInPhrase.clear(), targetNullWords.clear();};
+	~OSMPhrase(){};
+	//void getPhraseInFormat(int startIndex , string t);
+	void computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp , vector <string> & history , int order);
+	void constructCepts(vector <int> & align , int startIndex , int endIndex);
+	void setPhrases(vector <string> & val1 , vector <string> & val2){currF = val1; currE = val2;}
+
+
 	private :
 
 	vector <string> currE;
@@ -26,10 +33,10 @@ class Phrase
 	void getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , vector <int> > & tS , map <int , vector <int> > & sT);
 
 	void print();
-	void constructCepts(int startIndex , vector <string> & alignment);	
 	int stringToInteger(string s);
 	
 };
 
+}
 
 

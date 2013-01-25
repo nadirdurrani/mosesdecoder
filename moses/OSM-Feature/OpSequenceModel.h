@@ -2,8 +2,12 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include "moses/FeatureFunction.h"
 #include "Ngram.h"
+#include "moses/Manager.h"
+#include "moses/OSM-Feature/osmTester.h"
+#include "moses/OSM-Feature/SRILM-API.h"
 
 namespace Moses
 {
@@ -12,13 +16,14 @@ class OpSequenceModel : public StatefulFeatureFunction
 {
 public:
 
-	LM *LanguageModel;
+	//LM *LanguageModel;
+	Api * ptrOp;
+	int lmOrder;
 
 	OpSequenceModel();
 
-	void readLanguageModel(char *,int);
-
-	void Load(const std::string &osmFeatureFile, const std::string &operationLM);
+	void readLanguageModel(const char *);
+	void Load(const std::string &osmFeatureFile, const std::string &operationLM , int orderVal);
 
 	FFState* Evaluate(
 	    const Hypothesis& cur_hypo,
@@ -38,6 +43,12 @@ protected:
 	typedef std::pair<std::string, std::string> ParallelPhrase;
 	typedef std::vector<float> Scores;
 	std::map<ParallelPhrase, Scores> m_coll;
+
+	std::vector < std::pair < std::set <int> , std::set <int> > > ceptsInPhrase;
+	std::set <int> targetNullWords;
+
+
+
 };
 
 

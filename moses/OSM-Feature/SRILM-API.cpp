@@ -134,7 +134,7 @@ double Api :: sentProb (char * toBeChecked)
 	return pow(10,lm_logprobSent(sentence));
 }	
 
-void Api :: read_lm( char *lmFile,int order)
+void Api :: read_lm(const char *lmFile,int order)
 {
 	
 

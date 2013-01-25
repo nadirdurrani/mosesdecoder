@@ -12,7 +12,7 @@ class Api
 
 	Api();
 	~Api();
-	void read_lm(char *,int);
+	void read_lm(const char *,int);
 	float lm_logprobContext( const VocabString word, const VocabString *context );
 	float lm_logprobSent( const VocabString *sentence );
 	double contextProb(char *, int & );

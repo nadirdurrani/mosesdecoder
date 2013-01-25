@@ -2106,7 +2106,7 @@ const string &StaticData::GetBinDirectory() const
 bool StaticData::LoadOpSequenceModel()
 {
   m_osmModel = new OpSequenceModel();
-  m_osmModel->Load("featureOnTrain", "operationLM9");
+  m_osmModel->Load("/fs/hel1/nadir/mosesExp/featureOnTrain", "/fs/hel1/nadir/mosesExp/operationLM9", 9);
 
   vector<float> weights;
   weights.push_back(1.5);

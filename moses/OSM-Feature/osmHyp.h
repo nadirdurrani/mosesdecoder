@@ -2,6 +2,7 @@
 
 # include "SRILM-API.h"
 # include "moses/FFState.h"
+# include "moses/Manager.h"
 # include <set>
 # include <map>
 # include <string>
@@ -48,7 +49,7 @@ class osmHypothesis
 
 	osmHypothesis();
 	~osmHypothesis(){};
-	void generateOperations(int j1 , int contFlag , std::vector <int> & coverageVector , std::string english , std::string german , std::set <int> & targetNullWords , std::vector <std::string> & currF);
+	void generateOperations(int & startIndex, int j1 , int contFlag , WordsBitmap & coverageVector , std::string english , std::string german , std::set <int> & targetNullWords , std::vector <std::string> & currF);
 	void calculateOSMProb(Api & opPtr , std::vector <std::string> & hist , int order);
 	void print();
 };

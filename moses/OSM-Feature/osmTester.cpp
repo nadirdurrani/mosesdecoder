@@ -12,9 +12,9 @@ using namespace std;
 using namespace Moses;
 
 
-void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector , Api & ptrOp , vector <string> & history , int order)
+void OSMPhrase :: computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp , vector <string> & history , int order)
 {
-	
+
 	set <int> eSide;
 	set <int> fSide;
 	set <int> :: iterator iter;
@@ -33,9 +33,9 @@ void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector 
 		{
 
 			j1 = startIndex;
-			source = currF[j1];
+			source = currF[j1-startIndex];
 			english = "_INS_";
-			ptr->generateOperations(j1, 0 , coverageVector , english , source , targetNullWords , currF);
+			ptr->generateOperations(startIndex, j1, 2 , coverageVector , english , source , targetNullWords , currF);
 		}
 	}
 	
@@ -72,13 +72,13 @@ void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector 
 		j1 = *iter + startIndex;
 		iter++; 
 
-		ptr->generateOperations(j1, 0 , coverageVector , english , source , targetNullWords , currF);
+		ptr->generateOperations(startIndex, j1, 0 , coverageVector , english , source , targetNullWords , currF);
 
 		
 		for (; iter != fSide.end(); iter++)
 		{
 		     j1 = *iter + startIndex;
-		     ptr->generateOperations(j1, 1 , coverageVector , english , source , targetNullWords , currF);		
+		     ptr->generateOperations(startIndex, j1, 1 , coverageVector , english , source , targetNullWords , currF);
 		}
 				
 	}	
@@ -89,7 +89,7 @@ void Phrase :: computeOSMFeature(int startIndex , vector <int> & coverageVector 
 
 }
 
-void Phrase :: getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , vector <int> > & tS , map <int , vector <int> > & sT)
+void OSMPhrase :: getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , vector <int> > & tS , map <int , vector <int> > & sT)
 {
 	set <int> :: iterator iter;
 
@@ -126,71 +126,89 @@ void Phrase :: getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , v
 
 }
 
-void Phrase :: constructCepts(int startIndex, vector <string> & alignment)
+void OSMPhrase :: constructCepts(vector <int> & align , int startIndex , int endIndex)
 {
 	
-	ceptsInPhrase.clear();	
+		std::map <int , vector <int> > sT;
+		std::map <int , vector <int> > tS;
+		std::set <int> eSide;
+		std::set <int> fSide;
+		std::set <int> :: iterator iter;
+		std :: map <int , vector <int> > :: iterator iter2;
+		std :: pair < set <int> , set <int> > cept;
+		int src;
+		int tgt;
 
-	map <int , vector <int> > sT;
-	map <int , vector <int> > tS;
-	set <int> eSide;
-	set <int> fSide;
-	set <int> :: iterator iter;
-	map <int , vector <int> > :: iterator iter2;
-	pair < set <int> , set <int> > cept;
-	
-	int index1;
-	int index2;
-	
 
-	for (int i =0 ; i < alignment.size(); i+=2)
-	{
-		index1=stringToInteger(alignment[i]);
-		index2=stringToInteger(alignment[i+1]);
-		
-		tS[index1].push_back(index2);
-		sT[index2].push_back(index1);
-	}
-
-	for (int i = 0; i< currF.size(); i++)
-	{
-		if (sT.find(i) == sT.end())
+		for (int i = 0;  i < align.size(); i+=2)
 		{
-			targetNullWords.insert(startIndex + i);
-		}
-	}
-	
-	
-	while (tS.size() != 0 && sT.size() != 0)
-	{
-	
-		iter2 = tS.begin();
-
-		eSide.clear();
-		fSide.clear();
-		eSide.insert (iter2->first);
-	
-		getMeCepts(eSide, fSide, tS , sT);
-
-		for (iter = eSide.begin(); iter != eSide.end(); iter++)
-		{
-			iter2 = tS.find(*iter);
-			tS.erase(iter2);
-		}
-		
-		for (iter = fSide.begin(); iter != fSide.end(); iter++)
-		{
-			iter2 = sT.find(*iter);
-			sT.erase(iter2);
+			src = align[i];
+			tgt = align[i+1];
+			tS[tgt].push_back(src);
+			sT[src].push_back(tgt);
 		}
 
-		cept = make_pair (fSide , eSide);
-		ceptsInPhrase.push_back(cept);
-	}
+		for (int i = startIndex; i<= endIndex; i++)
+		{
+			if (sT.find(i-startIndex) == sT.end())
+			{
+				targetNullWords.insert(i);
+			}
+		}
+
+
+		while (tS.size() != 0 && sT.size() != 0)
+		{
+
+			iter2 = tS.begin();
+
+			eSide.clear();
+			fSide.clear();
+			eSide.insert (iter2->first);
+
+			getMeCepts(eSide, fSide, tS , sT);
+
+			for (iter = eSide.begin(); iter != eSide.end(); iter++)
+			{
+				iter2 = tS.find(*iter);
+				tS.erase(iter2);
+			}
+
+			for (iter = fSide.begin(); iter != fSide.end(); iter++)
+			{
+				iter2 = sT.find(*iter);
+				sT.erase(iter2);
+			}
+
+			cept = make_pair (fSide , eSide);
+			ceptsInPhrase.push_back(cept);
+		}
+
+
+		for (int i = 0; i < ceptsInPhrase.size(); i++)
+			{
+
+				fSide = ceptsInPhrase[i].first;
+				eSide = ceptsInPhrase[i].second;
+
+				for (iter = eSide.begin(); iter != eSide.end(); iter++)
+				{
+			   		cerr<<*iter<<" ";
+				}
+			    	cerr<<"<---> ";
+
+				for (iter = fSide.begin(); iter != fSide.end(); iter++)
+				{
+					cerr<<*iter<<" ";
+				}
+
+				cerr<<endl;
+			}
+			cerr<<endl;
 
 }
 
-int Phrase :: stringToInteger(string s)
+int OSMPhrase :: stringToInteger(string s)
 {
 
 	istringstream buffer(s);
@@ -199,8 +217,8 @@ int Phrase :: stringToInteger(string s)
 	return some_int;
 }
 
-
-void Phrase :: getPhraseInFormat(int startIndex , string t)
+/*
+void OSMPhrase :: getPhraseInFormat(int startIndex , string t)
 {
 
 	string e;
@@ -215,8 +233,8 @@ void Phrase :: getPhraseInFormat(int startIndex , string t)
 	//int xx;
 	//cin>>xx;
 }
-
-void Phrase :: getWords(string inp, vector <string> & currInput)
+*
+void OSMPhrase :: getWords(string inp, vector <string> & currInput)
 {
 	currInput.clear();
 
@@ -251,7 +269,7 @@ void Phrase :: getWords(string inp, vector <string> & currInput)
 }
 
 
-void Phrase :: alignmentFormat(string input, vector <string> & a)
+void OSMPhrase :: alignmentFormat(string input, vector <string> & a)
 {
 	
 	vector <string> words;
@@ -275,7 +293,7 @@ void Phrase :: alignmentFormat(string input, vector <string> & a)
 	}
 }
 
-void Phrase :: readPhrases(string input, string & e, string & f, vector <string> & a)
+void OSMPhrase :: readPhrases(string input, string & e, string & f, vector <string> & a)
 {
 	a.clear();
 	string t;
@@ -302,7 +320,7 @@ void Phrase :: readPhrases(string input, string & e, string & f, vector <string>
 }
 
 
-void Phrase :: print()
+void OSMPhrase :: print()
 {
 	
 	cout<<endl<<"String F : ";
@@ -349,7 +367,7 @@ void Phrase :: print()
 }
 
 
-
+/*
 void loadInput(char * fileName, vector <string> & input)
 {
 
@@ -390,7 +408,7 @@ void lmInit(int order , Api & ptrOp)
 	//delete [] LM;
 }
 
-/*
+
 int main(int argc, char * argv[])
 {
 
