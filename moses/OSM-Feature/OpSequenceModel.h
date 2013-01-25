@@ -6,7 +6,7 @@
 #include "moses/FeatureFunction.h"
 #include "Ngram.h"
 #include "moses/Manager.h"
-#include "moses/OSM-Feature/osmTester.h"
+#include "moses/OSM-Feature/osmHyp.h"
 #include "moses/OSM-Feature/SRILM-API.h"
 
 namespace Moses

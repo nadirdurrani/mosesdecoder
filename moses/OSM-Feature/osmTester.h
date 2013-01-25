@@ -1,3 +1,4 @@
+/*
 #pragma once
 
 #include "osmHyp.h"
@@ -39,4 +40,4 @@ class OSMPhrase
 
 }
 
-
+*/

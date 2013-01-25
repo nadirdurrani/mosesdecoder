@@ -3,7 +3,7 @@
 #include "osmHyp.h"
 #include "util/check.hh"
 #include "moses/Util.h"
-#include "moses/OSM-Feature/osmTester.h"
+#include "moses/OSM-Feature/osmHyp.h"
 
 
 
@@ -88,10 +88,11 @@ FFState* OpSequenceModel::Evaluate(
   const Manager &manager = cur_hypo.GetManager();
   const InputType &source = manager.GetSource();
   const Sentence &sourceSentence = static_cast<const Sentence&>(source);
-  OSMPhrase obj;
+  osmHypothesis obj;
   vector <string> mySourcePhrase;
   vector <string> myTargetPhrase;
-  vector <string> history;
+
+
 
   //target.GetWord(0)
 
@@ -150,17 +151,29 @@ FFState* OpSequenceModel::Evaluate(
 
   //cerr<<myBitmap<<endl;
 
+
+
   int xx;
 
+
+  obj.setState(prev_state);
   obj.constructCepts(alignments,startIndex,endIndex);
   obj.setPhrases(mySourcePhrase , myTargetPhrase);
-  statePtr = obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,history,lmOrder);
+  obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,lmOrder);
+
+  if (bitmap.GetFirstGapPos() == NOT_FOUND)
+  {
+	 int a = bitmap.GetFirstGapPos();
+	cerr<<a<<endl;
+    cin>>xx;
+  }
+
+  return obj.saveState();
 
 
- // cin>>xx;
 
 
-  return statePtr;
+  //return statePtr;
  // return NULL;
 }
 

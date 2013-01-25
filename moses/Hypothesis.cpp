@@ -316,14 +316,16 @@ void Hypothesis::CalcScore(const SquareMatrix &futureScore)
     m_manager.GetTranslationSystem()->GetStatefulFeatureFunctions();
   for (unsigned i = 0; i < ffs.size(); ++i) {
 	const StatefulFeatureFunction *ff = ffs[i];
-	cerr << "ff descr=" << ff->GetScoreProducerDescription() << endl;
+	//cerr << "ff descr=" << ff->GetScoreProducerDescription() << endl;
+
 
     m_ffStates[i] = ffs[i]->Evaluate(
                       *this,
                       m_prevHypo ? m_prevHypo->m_ffStates[i] : NULL,
                       &m_currScoreBreakdown);
     const FFState *state = m_ffStates[i];
-    cerr << state->getName() << endl;
+
+    //cerr << state->getName() << endl;
   }
 
   IFVERBOSE(2) {

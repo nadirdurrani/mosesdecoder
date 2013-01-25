@@ -10,9 +10,11 @@ osmState::osmState()
   history.push_back("<s>");
 }
 
-void osmState::saveState(int jVal, int eVal, vector <string> & histVal)
+void osmState::saveState(int jVal, int eVal, vector <string> & histVal , map <int , string> & gapVal)
 {
 	history.clear();
+	gap.clear();
+	gap = gapVal;
 	history = histVal;
 	j = jVal;
 	E = eVal;
@@ -43,17 +45,34 @@ osmHypothesis :: osmHypothesis()
 	gapCount = 0;
 	j = 0;
 	E = 0;
+	history.clear();
+	gap.clear();
+}
+
+void osmHypothesis :: setState(const FFState* prev_state)
+{
+
+	if(prev_state != NULL)
+	{
+
+
+		j = static_cast <const osmState *> (prev_state)->getJ();
+		E =  static_cast <const osmState *> (prev_state)->getE();
+		history = static_cast <const osmState *> (prev_state)->getHistory();
+		gap = static_cast <const osmState *> (prev_state)->getGap();
+
+	}
 }
 
 osmState * osmHypothesis :: saveState()
 {
 
 	osmState * statePtr = new osmState;
-	statePtr->saveState(j,E,history);
+	statePtr->saveState(j,E,history,gap);
 	return statePtr;
 }
 
-void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & hist , int order)
+void osmHypothesis :: calculateOSMProb(Api & ptrOp , int order)
 {
 	
 	opProb = 0;
@@ -65,19 +84,25 @@ void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & hist , in
 	for (int i=0; i< operations.size(); i++)
 		numbers.push_back(ptrOp.getLMID(const_cast <char *> (operations[i].c_str())));
 
-	for (int i=0; i< hist.size(); i++)
-		context.push_back(ptrOp.getLMID(const_cast <char *> (hist[i].c_str())));
+	cerr<<"History Of Operations "<<history.size()<<endl;
+
+	for (int i=0; i< history.size(); i++)
+	{
+		context.push_back(ptrOp.getLMID(const_cast <char *> (history[i].c_str())));
+		cerr<<history[i]<<" ";
+	}
+	cerr<<endl;
 
 	for (int i = 0; i<operations.size(); i++)
 	{
-		//cout<<opSeq[i]<<endl;
+		//cerr<<operations[i]<<endl;
 		context.push_back(numbers[i]);
-		hist.push_back(operations[i]);
+		history.push_back(operations[i]);
 		//cout<<"Context Size "<<context.size()<<endl;
 		if (context.size() > order)
 		{
 			context.erase(context.begin());
-			hist.erase(hist.begin());
+			history.erase(history.begin());
 		}
 		
 		temp = ptrOp.contextProbN(context,nonWordFlag);		   
@@ -87,12 +112,12 @@ void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & hist , in
 	
 	}
 
-	if (hist.size() > order-1)
+	if (history.size() > order-1)
 	{
-	      hist.erase(hist.begin());
+	      history.erase(history.begin());
 	}
 
-	  history = hist;
+
 }
 
 
@@ -322,6 +347,201 @@ int osmHypothesis :: getOpenGaps()
 	return nd;
 
 }
+
+void osmHypothesis :: computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp, int order)
+{
+
+
+	set <int> eSide;
+	set <int> fSide;
+	set <int> :: iterator iter;
+	string english;
+	string source;
+	int j1;
+	int start = 0;
+
+	if (targetNullWords.size() != 0)
+	{
+		iter = targetNullWords.begin();
+
+		if (*iter == startIndex)
+		{
+
+			j1 = startIndex;
+			source = currF[j1-startIndex];
+			english = "_INS_";
+			generateOperations(startIndex, j1, 2 , coverageVector , english , source , targetNullWords , currF);
+		}
+	}
+
+
+	for (int i = 0; i < ceptsInPhrase.size(); i++)
+	{
+		source = "";
+		english = "";
+
+		fSide = ceptsInPhrase[i].first;
+		eSide = ceptsInPhrase[i].second;
+
+		iter = eSide.begin();
+		english += currE[*iter];
+		iter++;
+
+		for (; iter != eSide.end(); iter++)
+		{
+			english += "^_^";
+			english += currE[*iter];
+		}
+
+		iter = fSide.begin();
+		source += currF[*iter];
+		iter++;
+
+		for (; iter != fSide.end(); iter++)
+		{
+			source += "^_^";
+			source += currF[*iter];
+		}
+
+		iter = fSide.begin();
+		j1 = *iter + startIndex;
+		iter++;
+
+		generateOperations(startIndex, j1, 0 , coverageVector , english , source , targetNullWords , currF);
+
+
+		for (; iter != fSide.end(); iter++)
+		{
+		     j1 = *iter + startIndex;
+		     generateOperations(startIndex, j1, 1 , coverageVector , english , source , targetNullWords , currF);
+		}
+
+	}
+
+	calculateOSMProb(ptrOp, order);
+	print();
+
+}
+
+void osmHypothesis :: getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , vector <int> > & tS , map <int , vector <int> > & sT)
+{
+	set <int> :: iterator iter;
+
+	int sz = eSide.size();
+	vector <int> t;
+
+	for (iter = eSide.begin(); iter != eSide.end(); iter++)
+	{
+	   t = tS[*iter];
+
+	   for (int i = 0; i < t.size(); i++)
+	   {
+		fSide.insert(t[i]);
+	   }
+
+	}
+
+	for (iter = fSide.begin(); iter != fSide.end(); iter++)
+	{
+
+		t = sT[*iter];
+
+		for (int i = 0 ; i<t.size(); i++)
+		{
+				eSide.insert(t[i]);
+		}
+
+	}
+
+	if (eSide.size () > sz)
+	{
+		getMeCepts(eSide,fSide,tS,sT);
+	}
+
+}
+
+void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int endIndex)
+{
+
+		std::map <int , vector <int> > sT;
+		std::map <int , vector <int> > tS;
+		std::set <int> eSide;
+		std::set <int> fSide;
+		std::set <int> :: iterator iter;
+		std :: map <int , vector <int> > :: iterator iter2;
+		std :: pair < set <int> , set <int> > cept;
+		int src;
+		int tgt;
+
+
+		for (int i = 0;  i < align.size(); i+=2)
+		{
+			src = align[i];
+			tgt = align[i+1];
+			tS[tgt].push_back(src);
+			sT[src].push_back(tgt);
+		}
+
+		for (int i = startIndex; i<= endIndex; i++)
+		{
+			if (sT.find(i-startIndex) == sT.end())
+			{
+				targetNullWords.insert(i);
+			}
+		}
+
+
+		while (tS.size() != 0 && sT.size() != 0)
+		{
+
+			iter2 = tS.begin();
+
+			eSide.clear();
+			fSide.clear();
+			eSide.insert (iter2->first);
+
+			getMeCepts(eSide, fSide, tS , sT);
+
+			for (iter = eSide.begin(); iter != eSide.end(); iter++)
+			{
+				iter2 = tS.find(*iter);
+				tS.erase(iter2);
+			}
+
+			for (iter = fSide.begin(); iter != fSide.end(); iter++)
+			{
+				iter2 = sT.find(*iter);
+				sT.erase(iter2);
+			}
+
+			cept = make_pair (fSide , eSide);
+			ceptsInPhrase.push_back(cept);
+		}
+
+
+		for (int i = 0; i < ceptsInPhrase.size(); i++)
+			{
+
+				fSide = ceptsInPhrase[i].first;
+				eSide = ceptsInPhrase[i].second;
+
+				for (iter = eSide.begin(); iter != eSide.end(); iter++)
+				{
+			   		cerr<<*iter<<" ";
+				}
+			    	cerr<<"<---> ";
+
+				for (iter = fSide.begin(); iter != fSide.end(); iter++)
+				{
+					cerr<<*iter<<" ";
+				}
+
+				cerr<<endl;
+			}
+			cerr<<endl;
+
+}
+
 
 } // namespace
 
