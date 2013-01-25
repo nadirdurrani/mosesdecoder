@@ -155,6 +155,8 @@ FFState* OpSequenceModel::Evaluate(
   obj.constructCepts(alignments,startIndex,endIndex);
   obj.setPhrases(mySourcePhrase , myTargetPhrase);
   statePtr = obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,history,lmOrder);
+
+
  // cin>>xx;
 
 
