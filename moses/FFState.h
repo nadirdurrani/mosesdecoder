@@ -15,6 +15,7 @@ class FFState
 public:
   virtual ~FFState();
   virtual int Compare(const FFState& other) const = 0;
+  virtual std::string getName() const {return "I was here ...";}
 };
 
 class DummyState : public FFState {

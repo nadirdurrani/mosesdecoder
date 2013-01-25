@@ -10,6 +10,14 @@ osmState::osmState()
   history.push_back("<s>");
 }
 
+void osmState::saveState(int jVal, int eVal, vector <string> & histVal)
+{
+	history.clear();
+	history = histVal;
+	j = jVal;
+	E = eVal;
+}
+
 int osmState::Compare(const FFState& otherBase) const
 {
   const osmState &other = static_cast<const osmState&>(otherBase);
@@ -35,6 +43,14 @@ osmHypothesis :: osmHypothesis()
 	gapCount = 0;
 	j = 0;
 	E = 0;
+}
+
+osmState * osmHypothesis :: saveState()
+{
+
+	osmState * statePtr = new osmState;
+	statePtr->saveState(j,E,history);
+	return statePtr;
 }
 
 void osmHypothesis :: calculateOSMProb(Api & ptrOp , vector <string> & hist , int order)

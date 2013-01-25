@@ -12,7 +12,7 @@ using namespace std;
 using namespace Moses;
 
 
-void OSMPhrase :: computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp , vector <string> & history , int order)
+osmState * OSMPhrase :: computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp , vector <string> & history , int order)
 {
 
 	set <int> eSide;
@@ -84,9 +84,9 @@ void OSMPhrase :: computeOSMFeature(int startIndex , WordsBitmap & coverageVecto
 	}	
 
 	ptr->calculateOSMProb(ptrOp , history , order);
-	ptr->print();
-	delete ptr;
-
+	//ptr->print();
+	//delete ptr;
+	return ptr->saveState();
 }
 
 void OSMPhrase :: getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , vector <int> > & tS , map <int , vector <int> > & sT)

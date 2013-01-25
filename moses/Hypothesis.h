@@ -260,9 +260,6 @@ public:
   const FFState* GetFFState(int idx) const {
     return m_ffStates[idx];
   }
-  void SetFFState(int idx, FFState* state) {
-    m_ffStates[idx] = state;
-  }
 
   // Added by oliver.wilson@ed.ac.uk for async lm stuff.
   void IncorporateTransOptScores();

@@ -18,6 +18,7 @@ class osmState : public FFState
 public:
   osmState();
   int Compare(const FFState& other) const;
+  void saveState(int jVal, int eVal, vector <string> & history);
 protected:
   int j, E;
   std::map <int,std::string> gap;
@@ -52,6 +53,8 @@ class osmHypothesis
 	void generateOperations(int & startIndex, int j1 , int contFlag , WordsBitmap & coverageVector , std::string english , std::string german , std::set <int> & targetNullWords , std::vector <std::string> & currF);
 	void calculateOSMProb(Api & opPtr , std::vector <std::string> & hist , int order);
 	void print();
+	std::string getName() const {cerr<<"This is inside osm state"; int xx; cin>>xx; return "inside osm";}
+	osmState * saveState();
 };
 
 } // namespace

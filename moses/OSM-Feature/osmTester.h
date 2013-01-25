@@ -15,7 +15,7 @@ class OSMPhrase
 	OSMPhrase(){currE.clear(), currF.clear(), ceptsInPhrase.clear(), targetNullWords.clear();};
 	~OSMPhrase(){};
 	//void getPhraseInFormat(int startIndex , string t);
-	void computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp , vector <string> & history , int order);
+	osmState * computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp , vector <string> & history , int order);
 	void constructCepts(vector <int> & align , int startIndex , int endIndex);
 	void setPhrases(vector <string> & val1 , vector <string> & val2){currF = val1; currE = val2;}
 

@@ -116,6 +116,8 @@ FFState* OpSequenceModel::Evaluate(
    int startIndex  = sourceRange.GetStartPos();
    int endIndex = sourceRange.GetEndPos();
    const AlignmentInfo &align = cur_hypo.GetCurrTargetPhrase().GetAlignTerm();
+   osmState * statePtr;
+
    vector <int> alignments;
 
 
@@ -152,12 +154,12 @@ FFState* OpSequenceModel::Evaluate(
 
   obj.constructCepts(alignments,startIndex,endIndex);
   obj.setPhrases(mySourcePhrase , myTargetPhrase);
-  obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,history,lmOrder);
-  cin>>xx;
+  statePtr = obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,history,lmOrder);
+ // cin>>xx;
 
 
-
-  return NULL;
+  return statePtr;
+ // return NULL;
 }
 
 FFState* OpSequenceModel::EvaluateChart(

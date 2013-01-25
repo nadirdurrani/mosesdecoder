@@ -319,6 +319,8 @@ void Hypothesis::CalcScore(const SquareMatrix &futureScore)
                       *this,
                       m_prevHypo ? m_prevHypo->m_ffStates[i] : NULL,
                       &m_currScoreBreakdown);
+    const FFState *state = m_ffStates[i];
+    cerr << state->getName() << endl;
   }
 
   IFVERBOSE(2) {
