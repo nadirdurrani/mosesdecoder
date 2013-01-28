@@ -453,6 +453,7 @@ void Hypothesis::PrintHypothesis() const
   //	TRACE_ERR( "\tword penalty "); // <<(m_score[ScoreType::WordPenalty]*weightWordPenalty)<<endl;
   TRACE_ERR( "\tscore "<<m_totalScore - m_futureScore<<" + future cost "<<m_futureScore<<" = "<<m_totalScore<<endl);
   TRACE_ERR(  "\tunweighted feature scores: " << m_currScoreBreakdown << endl);
+
   //PrintLMScores();
 }
 
@@ -561,6 +562,18 @@ std::string Hypothesis::GetTargetPhraseStringRep() const
     allFactors.push_back(i);
   }
   return GetTargetPhraseStringRep(allFactors);
+}
+
+void Hypothesis :: outputOSMSequence() const
+{
+
+	const FFState * state = m_ffStates[2];
+
+	if (m_prevHypo)
+	m_prevHypo->outputOSMSequence();
+
+	state->getName();
+
 }
 
 }

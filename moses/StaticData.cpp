@@ -2109,11 +2109,11 @@ bool StaticData::LoadOpSequenceModel()
   m_osmModel->Load("/fs/hel1/nadir/mosesExp/featureOnTrain", "/fs/hel1/nadir/mosesExp/operationLM9", 9);
 
   vector<float> weights;
-  weights.push_back(1.5);
-  weights.push_back(2.5);
-  weights.push_back(3.5);
-  weights.push_back(4.5);
-  weights.push_back(5.5);
+  weights.push_back(1.0);
+  weights.push_back(-0.2);
+  weights.push_back(-0.1);
+  weights.push_back(-0.1);
+  weights.push_back(-1.0);
 
   SetWeights(m_osmModel,weights);
 

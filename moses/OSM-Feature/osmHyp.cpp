@@ -35,6 +35,25 @@ int osmState::Compare(const FFState& otherBase) const
   return 0;
 }
 
+void osmState :: print() const
+{
+
+	for (int i = 0; i< delHistory.size(); i++)
+		{
+			cerr<<delHistory[i]<<" ";
+		}
+
+}
+
+std::string osmState :: getName() const
+{
+
+		print();
+		return "done";
+}
+
+//////////////////////////////////////////////////
+
 osmHypothesis :: osmHypothesis()
 {
 	opProb = 0;
@@ -69,6 +88,7 @@ osmState * osmHypothesis :: saveState()
 
 	osmState * statePtr = new osmState;
 	statePtr->saveState(j,E,history,gap);
+	statePtr->saveDelHistory(operations);
 	return statePtr;
 }
 
@@ -84,14 +104,14 @@ void osmHypothesis :: calculateOSMProb(Api & ptrOp , int order)
 	for (int i=0; i< operations.size(); i++)
 		numbers.push_back(ptrOp.getLMID(const_cast <char *> (operations[i].c_str())));
 
-	cerr<<"History Of Operations "<<history.size()<<endl;
+	// cerr<<"History Of Operations "<<history.size()<<endl;
 
 	for (int i=0; i< history.size(); i++)
 	{
 		context.push_back(ptrOp.getLMID(const_cast <char *> (history[i].c_str())));
-		cerr<<history[i]<<" ";
+		//cerr<<history[i]<<" ";
 	}
-	cerr<<endl;
+	//cerr<<endl;
 
 	for (int i = 0; i<operations.size(); i++)
 	{
@@ -116,7 +136,6 @@ void osmHypothesis :: calculateOSMProb(Api & ptrOp , int order)
 	{
 	      history.erase(history.begin());
 	}
-
 
 }
 
@@ -419,7 +438,7 @@ void osmHypothesis :: computeOSMFeature(int startIndex , WordsBitmap & coverageV
 	}
 
 	calculateOSMProb(ptrOp, order);
-	print();
+	//print();
 
 }
 
@@ -518,7 +537,7 @@ void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int
 			ceptsInPhrase.push_back(cept);
 		}
 
-
+/*
 		for (int i = 0; i < ceptsInPhrase.size(); i++)
 			{
 
@@ -539,7 +558,18 @@ void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int
 				cerr<<endl;
 			}
 			cerr<<endl;
+*/
 
+}
+
+void osmHypothesis :: populateScores(vector <float> & scores)
+{
+	scores.clear();
+	scores.push_back(opProb);
+	scores.push_back(gapWidth);
+	scores.push_back(gapCount);
+	scores.push_back(openGapCount);
+	scores.push_back(deletionCount);
 }
 
 

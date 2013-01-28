@@ -156,10 +156,12 @@ public:
 
       // MAP decoding: best hypothesis
       const Hypothesis* bestHypo = NULL;
+
       if (!staticData.UseMBR()) 
 			{
         bestHypo = manager.GetBestHypothesis();
         if (bestHypo) {
+        	bestHypo->outputOSMSequence();
           if (staticData.IsPathRecoveryEnabled()) {
             OutputInput(out, bestHypo);
             out << "||| ";

@@ -91,12 +91,12 @@ FFState* OpSequenceModel::Evaluate(
   osmHypothesis obj;
   vector <string> mySourcePhrase;
   vector <string> myTargetPhrase;
-
+  vector<float> scores(5);
 
 
   //target.GetWord(0)
 
-  cerr << target <<" --- "<<target.GetSourcePhrase()<< endl;  // English ...
+  /*cerr << target <<" --- "<<target.GetSourcePhrase()<< endl;  // English ...*/
 
   //cerr << align << endl;   // Alignments ...
   //cerr << cur_hypo.GetCurrSourceWordsRange() << endl;
@@ -132,7 +132,7 @@ FFState* OpSequenceModel::Evaluate(
       }
 
 
-   cerr<<bitmap<<endl;
+   //cerr<<bitmap<<endl;
    //cerr<<startIndex<<" "<<endIndex<<endl;
 
 
@@ -160,13 +160,28 @@ FFState* OpSequenceModel::Evaluate(
   obj.constructCepts(alignments,startIndex,endIndex);
   obj.setPhrases(mySourcePhrase , myTargetPhrase);
   obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,lmOrder);
+  obj.populateScores(scores);
 
+/*
   if (bitmap.GetFirstGapPos() == NOT_FOUND)
   {
+	 cerr<<bitmap<<endl;
 	 int a = bitmap.GetFirstGapPos();
-	cerr<<a<<endl;
+	 obj.print();
     cin>>xx;
   }
+  */
+
+/*
+  vector<float> scores(5);
+  scores[0] = 0.343423f;
+  scores[1] = 1.343423f;
+  scores[2] = 2.343423f;
+  scores[3] = 3.343423f;
+  scores[4] = 4.343423f;
+  */
+
+  accumulator->PlusEquals(this, scores);
 
   return obj.saveState();
 

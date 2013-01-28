@@ -19,16 +19,19 @@ public:
   osmState();
   int Compare(const FFState& other) const;
   void saveState(int jVal, int eVal, vector <string> & hist , map <int , string> & gapVal);
-  std::string getName() const {cerr<<"This is inside osm state "<<E<<" "<<j<<endl; int xx; cin>>xx; return "inside osm";}
   int getJ()const {return j;}
   int getE()const {return E;}
   map <int , string> getGap() const { return gap;}
   vector <string> getHistory()const {return history;}
+  void print() const;
+  std::string getName() const;
+  void saveDelHistory(vector <string> & histVal){delHistory = histVal;}
 
 protected:
   int j, E;
   std::map <int,std::string> gap;
   std::vector <std::string> history;
+  std::vector <std::string> delHistory;
 };
 
 class osmHypothesis
@@ -73,6 +76,8 @@ class osmHypothesis
 	void setState(const FFState* prev_state);
 	osmState * saveState();
 	void print();
+	void populateScores(vector <float> & scores);
+
 };
 
 } // namespace

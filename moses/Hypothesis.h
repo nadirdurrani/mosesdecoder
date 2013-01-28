@@ -95,6 +95,7 @@ protected:
   Hypothesis(const Hypothesis &prevHypo, const TranslationOption &transOpt);
 
 public:
+  void outputOSMSequence() const;
   static ObjectPool<Hypothesis> &GetObjectPool() {
     return s_objectPool;
   }
