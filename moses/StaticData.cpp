@@ -2105,9 +2105,30 @@ const string &StaticData::GetBinDirectory() const
 
 bool StaticData::LoadOpSequenceModel()
 {
-  m_osmModel = new OpSequenceModel();
-  m_osmModel->Load("/fs/hel1/nadir/mosesExp/featureOnTrain", "/fs/hel1/nadir/mosesExp/operationLM9", 9);
 
+	const vector<string> & osmVector = m_parameter->GetParam("osm-file");
+
+	cout<<"Printing vector "<<endl;
+	for (int i = 0; i<osmVector.size(); i++)
+		cerr<<osmVector[i]<<endl;
+
+	if (osmVector.size() > 0)
+	{
+		//int xx;
+		//cin>>xx;
+
+
+		 m_osmModel = new OpSequenceModel();
+		 //m_osmModel->Load("/fs/hel1/nadir/mosesExp/featureOnTrain", "/fs/hel1/nadir/mosesExp/operationLM9", 9);
+		 m_osmModel->Load(osmVector[1], osmVector[2], Scan<int>(osmVector[0]));
+
+		 vector<float> weightAll = Scan<float>(m_parameter->GetParam("weight-o"));
+		 SetWeights(m_osmModel,weightAll);
+	}
+
+
+
+//*
   vector<float> weights;
   weights.push_back(1.0);
   weights.push_back(-0.2);
@@ -2116,6 +2137,7 @@ bool StaticData::LoadOpSequenceModel()
   weights.push_back(-1.0);
 
   SetWeights(m_osmModel,weights);
+ // */
 
   return true;
 }

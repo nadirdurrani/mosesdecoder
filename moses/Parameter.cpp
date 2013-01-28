@@ -55,6 +55,7 @@ Parameter::Parameter()
   AddParam("inputtype", "text (0), confusion network (1), word lattice (2) (default = 0)");
   AddParam("labeled-n-best-list", "print out labels for each weight type in n-best list. default is true");
   AddParam("lmodel-file", "location and properties of the language models");
+  AddParam("osm-file", "location and properties of the operation sequence models");
   AddParam("lmodel-dub", "dictionary upper bounds of language models");
   AddParam("lmodel-oov-feature", "add language model oov feature, one per model");
   AddParam("mapping", "description of decoding steps");
@@ -101,6 +102,7 @@ Parameter::Parameter()
 	AddParam("weight-w", "w", "weight for word penalty");
 	AddParam("weight-u", "u", "weight for unknown word penalty");
 	AddParam("weight-e", "e", "weight for word deletion"); 
+	AddParam("weight-o", "osm weights");
   AddParam("weight-file", "wf", "feature weights file. Do *not* put weights for 'core' features in here - they go in moses.ini");
 	AddParam("output-factors", "list if factors in the output");
 	AddParam("cache-path", "?");
