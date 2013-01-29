@@ -107,9 +107,6 @@ FFState* OpSequenceModel::Evaluate(
  // cerr << source.GetWord(a);
   //cerr <<a<<endl;
 
-
-
-
   //const Sentence &sentence = static_cast<const Sentence&>(curr_hypo.GetManager().GetSource());
 
 
@@ -145,7 +142,12 @@ FFState* OpSequenceModel::Evaluate(
 
   for (int i = 0; i < target.GetSize(); i++)
   {
-	  myTargetPhrase.push_back(target.GetWord(i).GetFactor(0)->GetString());
+
+	  if (target.GetWord(i).GetFactor(1) != NULL)
+		  myTargetPhrase.push_back("_TRANS_SLF_");
+	  else
+		  myTargetPhrase.push_back(target.GetWord(i).GetFactor(0)->GetString());
+
 	  //cerr<<myTargetPhrase[i]<<endl;
   }
 
@@ -153,7 +155,7 @@ FFState* OpSequenceModel::Evaluate(
 
 
 
-  int xx;
+
 
 
   obj.setState(prev_state);
@@ -165,6 +167,8 @@ FFState* OpSequenceModel::Evaluate(
 /*
   if (bitmap.GetFirstGapPos() == NOT_FOUND)
   {
+
+    int xx;
 	 cerr<<bitmap<<endl;
 	 int a = bitmap.GetFirstGapPos();
 	 obj.print();

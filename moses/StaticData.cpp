@@ -2108,7 +2108,7 @@ bool StaticData::LoadOpSequenceModel()
 
 	const vector<string> & osmVector = m_parameter->GetParam("osm-file");
 
-	cout<<"Printing vector "<<endl;
+	cerr<<"Printing vector "<<endl;
 	for (int i = 0; i<osmVector.size(); i++)
 		cerr<<osmVector[i]<<endl;
 
