@@ -587,6 +587,7 @@ void TranslationOptionCollection::CreateTranslationOptionsForRange(
       vector<TranslationOption*>::const_iterator iterColl;
       for (iterColl = partTransOptList.begin() ; iterColl != partTransOptList.end() ; ++iterColl) {
         TranslationOption *transOpt = *iterColl;
+
         transOpt->CalcScore(m_system);
         Add(transOpt);
       }

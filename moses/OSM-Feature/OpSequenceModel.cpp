@@ -66,7 +66,14 @@ void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string 
     tokens = TokenizeMultiCharSeparator(line, "|||");
     CHECK(tokens.size() == 3);
 
-    ParallelPhrase pp(tokens[0], tokens[1]);
+    vector<FactorType> factorOrder;
+    factorOrder.push_back(1);
+
+    Phrase source, target;
+    source.CreateFromString(factorOrder, tokens[0], "|");
+    target.CreateFromString(factorOrder, tokens[1], "|");
+
+    ParallelPhrase pp(source, target);
     Scores scores = Tokenize<float>(tokens[2], " ");
     m_coll[pp] = scores;
   }
@@ -214,6 +221,21 @@ const FFState* OpSequenceModel::EmptyHypothesisState(const InputType &input) con
 std::string OpSequenceModel::GetScoreProducerWeightShortName(unsigned idx) const
 {
   return "osm";
+}
+
+std::vector<float> OpSequenceModel::GetFutureScores(const Phrase &source, const Phrase &target) const
+{
+  ParallelPhrase pp(source, target);
+  std::map<ParallelPhrase, Scores>::const_iterator iter;
+  iter = m_coll.find(pp);
+  if (iter == m_coll.end()) {
+    vector<float> scores(5, 0);
+    return scores;
+  }
+  else {
+    const vector<float> &scores = iter->second;
+	return scores;
+  }
 }
 
 } // namespace

@@ -39,8 +39,10 @@ public:
 
   virtual std::string GetScoreProducerWeightShortName(unsigned idx=0) const;
 
+  std::vector<float> GetFutureScores(const Phrase &source, const Phrase &target) const;
+
 protected:
-	typedef std::pair<std::string, std::string> ParallelPhrase;
+	typedef std::pair<Phrase, Phrase> ParallelPhrase;
 	typedef std::vector<float> Scores;
 	std::map<ParallelPhrase, Scores> m_coll;
 

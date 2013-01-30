@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 #include "LexicalReordering.h"
 #include "StaticData.h"
 #include "InputType.h"
-
+#include "OSM-Feature/OpSequenceModel.h"
 using namespace std;
 
 namespace Moses
@@ -113,10 +113,31 @@ void TranslationOption::CalcScore(const TranslationSystem* system)
 
   size_t phraseSize = GetTargetPhrase().GetSize();
   
+
   // future score
   m_futureScore = retFullScore - ngramScore + oovScore
                   + m_scoreBreakdown.InnerProduct(StaticData::Instance().GetAllWeights()) - phraseSize *
-                  system->GetWeightWordPenalty();
+                  system->GetWeightWordPenalty() + m_osmScore;
+}
+
+void TranslationOption::CalcOSMFutureScore(const TranslationSystem* system, const Phrase &source, const Phrase &target)
+{
+  m_osmScore = 0;
+  const ScoreComponentCollection &allWeights = StaticData::Instance().GetAllWeights();
+  const vector<const StatefulFeatureFunction*> &ffs = system->GetStatefulFeatureFunctions();
+  for (size_t i = 0; i < ffs.size(); ++i) {
+    const StatefulFeatureFunction *ff = ffs[i];
+    const OpSequenceModel *osmFF = dynamic_cast<const OpSequenceModel*>(ff);
+    if (osmFF) {
+      vector<float> scores = osmFF->GetFutureScores(source, target);
+      std::vector<float> weights = allWeights.GetScoresForProducer(osmFF);
+      CHECK(scores.size() == weights.size());
+
+      for (size_t ind = 0; ind < scores.size(); ++ind) {
+    	  m_osmScore += scores[ind] * weights[ind];
+      }
+    }
+  }
 }
 
 TO_STRING_BODY(TranslationOption);

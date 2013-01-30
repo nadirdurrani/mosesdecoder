@@ -66,6 +66,7 @@ protected:
   TargetPhrase 							m_targetPhrase; /*< output phrase when using this translation option */
   const WordsRange		m_sourceWordsRange; /*< word position in the input that are covered by this translation option */
   float               m_futureScore; /*< estimate of total cost when using this translation option, includes language model probabilities */
+  float m_osmScore;
 
   //! in TranslationOption, m_scoreBreakdown is not complete.  It cannot,
   //! for example, know the full n-gram score since the length of the
@@ -156,6 +157,8 @@ public:
 
   /** Calculate future score and n-gram score of this trans option, plus the score breakdowns */
   void CalcScore(const TranslationSystem* system);
+
+  void CalcOSMFutureScore(const TranslationSystem* system, const Phrase &source, const Phrase &target);
 
   void CacheScores(const ScoreProducer &scoreProducer, const Scores &score);
 

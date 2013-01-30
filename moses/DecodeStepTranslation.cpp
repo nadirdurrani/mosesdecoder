@@ -103,6 +103,8 @@ void DecodeStepTranslation::ProcessInitialTranslation(const TranslationSystem* s
   const WordsRange wordsRange(startPos, endPos);
   const TargetPhraseCollection *phraseColl =	phraseDictionary->GetTargetPhraseCollection(source,wordsRange);
 
+  Phrase sourcePhrase = source.GetSubString(wordsRange);
+
   if (phraseColl != NULL) {
     IFVERBOSE(3) {
       if(StaticData::Instance().GetInputType() == SentenceInput)
@@ -116,7 +118,10 @@ void DecodeStepTranslation::ProcessInitialTranslation(const TranslationSystem* s
 
     for (iterTargetPhrase = phraseColl->begin() ; iterTargetPhrase != iterEnd ; ++iterTargetPhrase) {
       const TargetPhrase	&targetPhrase = **iterTargetPhrase;
-      outputPartialTranslOptColl.Add (system, new TranslationOption(wordsRange, targetPhrase, source) );
+      TranslationOption *transOpt = new TranslationOption(wordsRange, targetPhrase, source);
+      transOpt->CalcOSMFutureScore(system, sourcePhrase, targetPhrase);
+
+      outputPartialTranslOptColl.Add (system, transOpt );
 
       VERBOSE(3,"\t" << targetPhrase << "\n");
     }
