@@ -2126,19 +2126,6 @@ bool StaticData::LoadOpSequenceModel()
 		 SetWeights(m_osmModel,weightAll);
 	}
 
-
-
-//*
-  vector<float> weights;
-  weights.push_back(1.0);
-  weights.push_back(-0.2);
-  weights.push_back(-0.1);
-  weights.push_back(-0.1);
-  weights.push_back(-1.0);
-
-  SetWeights(m_osmModel,weights);
- // */
-
   return true;
 }
 
