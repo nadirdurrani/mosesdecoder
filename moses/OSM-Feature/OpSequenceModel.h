@@ -19,6 +19,7 @@ public:
 	//LM *LanguageModel;
 	Api * ptrOp;
 	int lmOrder;
+	float unkOpProb;
 
 	OpSequenceModel();
 
@@ -44,7 +45,7 @@ public:
 protected:
 	typedef std::pair<Phrase, Phrase> ParallelPhrase;
 	typedef std::vector<float> Scores;
-	std::map<ParallelPhrase, Scores> m_coll;
+	std::map<ParallelPhrase, Scores> m_futureCost;
 
 	std::vector < std::pair < std::set <int> , std::set <int> > > ceptsInPhrase;
 	std::set <int> targetNullWords;

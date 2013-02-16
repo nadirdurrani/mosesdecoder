@@ -24,9 +24,14 @@ OpSequenceModel::OpSequenceModel()
 void OpSequenceModel :: readLanguageModel(const char *lmFile)
 {
 
-
+    vector <int> numbers;
+    int nonWordFlag = 0;
+    string unkOp = "_TRANS_SLF_";
 	ptrOp = new Api;
 	ptrOp -> read_lm(lmFile,lmOrder);
+	numbers.push_back(ptrOp->getLMID(const_cast <char *> (unkOp.c_str())));
+	unkOpProb = ptrOp->contextProbN(numbers,nonWordFlag);
+
 /*
   setlocale(LC_CTYPE, "");
   setlocale(LC_COLLATE, "");
@@ -51,13 +56,16 @@ void OpSequenceModel :: readLanguageModel(const char *lmFile)
 
 void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string &operationLM , int orderVal)
 {
-
-   lmOrder= orderVal;
+  // load future cost
+  lmOrder= orderVal;
   //vector <string> input;
   ifstream sr (osmFeatureFile.c_str());
   char* tmp;
 
   CHECK(sr.is_open());
+
+  vector<FactorType> factorOrder;
+  factorOrder.push_back(0);
 
   string line;
   while (std::getline(sr, line))
@@ -66,16 +74,14 @@ void OpSequenceModel::Load(const std::string &osmFeatureFile, const std::string 
     tokens = TokenizeMultiCharSeparator(line, "|||");
     CHECK(tokens.size() == 3);
 
-    vector<FactorType> factorOrder;
-    factorOrder.push_back(1);
-
     Phrase source, target;
     source.CreateFromString(factorOrder, tokens[0], "|");
     target.CreateFromString(factorOrder, tokens[1], "|");
 
     ParallelPhrase pp(source, target);
     Scores scores = Tokenize<float>(tokens[2], " ");
-    m_coll[pp] = scores;
+    m_futureCost[pp] = scores;
+   // m_coll[pp] = scores;
   }
 
   readLanguageModel(operationLM.c_str());
@@ -227,9 +233,11 @@ std::vector<float> OpSequenceModel::GetFutureScores(const Phrase &source, const 
 {
   ParallelPhrase pp(source, target);
   std::map<ParallelPhrase, Scores>::const_iterator iter;
-  iter = m_coll.find(pp);
-  if (iter == m_coll.end()) {
+  iter = m_futureCost.find(pp);
+ //iter = m_coll.find(pp);
+  if (iter == m_futureCost.end()) {
     vector<float> scores(5, 0);
+    scores[0] = unkOpProb;
     return scores;
   }
   else {

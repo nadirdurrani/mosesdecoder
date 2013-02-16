@@ -142,6 +142,9 @@ void SearchCubePruning::ProcessSentence()
 
     CreateForwardTodos(sourceHypoColl);
 
+  //  if (stackNo == 23)
+  //    cerr << sourceHypoColl << endl;
+
     stackNo++;
   }
 

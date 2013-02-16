@@ -115,13 +115,24 @@ void TranslationOption::CalcScore(const TranslationSystem* system)
   
 
   // future score
+
+  if (m_osmScore == 0 && GetTargetPhrase().GetWord(0).GetFactor(1) != NULL) // Getting OSM - Future cost for the unknown word ...
+  {
+	    CalcOSMFutureScore(system, m_targetPhrase, m_targetPhrase.GetSourcePhrase());
+  }
+
   m_futureScore = retFullScore - ngramScore + oovScore
                   + m_scoreBreakdown.InnerProduct(StaticData::Instance().GetAllWeights()) - phraseSize *
                   system->GetWeightWordPenalty() + m_osmScore;
+
+//cerr<<"Yahan "<<GetSourcePhrase()->GetWord(0)<<" "<<GetTargetPhrase().GetWord(0).GetFactor(1)<<" "<<m_osmScore<<endl;
+
 }
 
 void TranslationOption::CalcOSMFutureScore(const TranslationSystem* system, const Phrase &source, const Phrase &target)
 {
+
+ // cerr<<" range=" << m_sourceWordsRange << " source=" <<source<< " target= "<<target<<endl;
   m_osmScore = 0;
   const ScoreComponentCollection &allWeights = StaticData::Instance().GetAllWeights();
   const vector<const StatefulFeatureFunction*> &ffs = system->GetStatefulFeatureFunctions();
@@ -135,9 +146,12 @@ void TranslationOption::CalcOSMFutureScore(const TranslationSystem* system, cons
 
       for (size_t ind = 0; ind < scores.size(); ++ind) {
     	  m_osmScore += scores[ind] * weights[ind];
+    //	  cerr<<m_osmScore<<" "<<scores[ind]<<" "<<weights[ind]<<endl;
       }
     }
   }
+
+//   cerr<<"I was inside this function "<<m_osmScore<<endl;
 }
 
 TO_STRING_BODY(TranslationOption);
