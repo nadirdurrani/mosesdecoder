@@ -113,7 +113,7 @@ void TranslationOption::CalcScore(const TranslationSystem* system)
 
   size_t phraseSize = GetTargetPhrase().GetSize();
   
-
+/*
   // future score
 
   if (m_osmScore == 0 && GetTargetPhrase().GetWord(0).GetFactor(1) != NULL) // Getting OSM - Future cost for the unknown word ...
@@ -124,6 +124,13 @@ void TranslationOption::CalcScore(const TranslationSystem* system)
   m_futureScore = retFullScore - ngramScore + oovScore
                   + m_scoreBreakdown.InnerProduct(StaticData::Instance().GetAllWeights()) - phraseSize *
                   system->GetWeightWordPenalty() + m_osmScore;
+
+*/
+
+m_futureScore = retFullScore - ngramScore + oovScore
+                  + m_scoreBreakdown.InnerProduct(StaticData::Instance().GetAllWeights()) - phraseSize *
+                  system->GetWeightWordPenalty();
+
 
 //cerr<<"Yahan "<<GetSourcePhrase()->GetWord(0)<<" "<<GetTargetPhrase().GetWord(0).GetFactor(1)<<" "<<m_osmScore<<endl;
 
@@ -148,6 +155,8 @@ void TranslationOption::CalcOSMFutureScore(const TranslationSystem* system, cons
     	  m_osmScore += scores[ind] * weights[ind];
     //	  cerr<<m_osmScore<<" "<<scores[ind]<<" "<<weights[ind]<<endl;
       }
+
+      //m_osmScore = scores[0] * weights[0];
     }
   }
 

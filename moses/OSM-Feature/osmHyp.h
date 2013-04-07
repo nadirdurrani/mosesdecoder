@@ -55,12 +55,14 @@ class osmHypothesis
 	vector <string> currF;
 	vector < pair < set <int> , set <int> > > ceptsInPhrase;
 	set <int> targetNullWords;
-
+	set <int> sourceNullWords;
 
 	int closestGap(std::map <int,std::string> gap,int j1, int & gp);
 	int firstOpenGap(std::vector <int> & coverageVector);
 	std::string intToString(int);
 	int  getOpenGaps();
+	int isTranslationOperation(int j);
+	void removeReorderingOperations();
 
 	void getMeCepts ( set <int> & eSide , set <int> & fSide , map <int , vector <int> > & tS , map <int , vector <int> > & sT);
 
@@ -69,9 +71,10 @@ class osmHypothesis
 	osmHypothesis();
 	~osmHypothesis(){};
 	void generateOperations(int & startIndex, int j1 , int contFlag , WordsBitmap & coverageVector , std::string english , std::string german , std::set <int> & targetNullWords , std::vector <std::string> & currF);
+	void generateDeleteOperations(std::string english, int currTargetIndex, std::set <int> doneTargetIndexes);
 	void calculateOSMProb(Api & opPtr , int order);
 	void computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp, int order);
-	void constructCepts(vector <int> & align , int startIndex , int endIndex);
+	void constructCepts(vector <int> & align , int startIndex , int endIndex, int targetPhraseLength);
 	void setPhrases(vector <string> & val1 , vector <string> & val2){currF = val1; currE = val2;}
 	void setState(const FFState* prev_state);
 	osmState * saveState();

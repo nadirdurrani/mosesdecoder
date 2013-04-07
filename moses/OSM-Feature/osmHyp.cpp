@@ -92,6 +92,49 @@ osmState * osmHypothesis :: saveState()
 	return statePtr;
 }
 
+int osmHypothesis :: isTranslationOperation(int x)
+{
+	if (operations[x].find("_JMP_BCK_") != -1)
+	  return 0;
+	
+	if (operations[x].find("_JMP_FWD_") != -1)
+	  return 0;
+	
+	if (operations[x].find("_CONT_CEPT_") != -1)
+	  return 0;
+	
+	if (operations[x].find("_INS_GAP_") != -1)
+	  return 0;
+		
+	return 1;
+	
+}
+
+void osmHypothesis :: removeReorderingOperations()
+{
+	gapCount = 0; 	
+       deletionCount = 0;
+	openGapCount = 0;
+	gapWidth = 0;	
+	//cout<<"I came here"<<endl;
+
+	std::vector <std::string> tupleSequence;	
+
+	for (int x = 0; x < operations.size(); x++)
+	{
+		// cout<<operations[x]<<endl;
+
+		if(isTranslationOperation(x) == 1)
+		{
+			tupleSequence.push_back(operations[x]);
+		}
+		
+	} 
+
+	operations.clear();
+	operations = tupleSequence;
+}
+
 void osmHypothesis :: calculateOSMProb(Api & ptrOp , int order)
 {
 	
@@ -224,7 +267,7 @@ void osmHypothesis :: generateOperations(int & startIndex , int j1 , int contFla
 			j=j1;
 		}
 
-		if(contFlag == 0) // First words of the multil-word cept ...
+		if(contFlag == 0) // First words of the multi-word cept ...
 		{
 
 			if(english == "_TRANS_SLF_") // Unknown word ...
@@ -367,10 +410,29 @@ int osmHypothesis :: getOpenGaps()
 
 }
 
+void osmHypothesis :: generateDeleteOperations(std::string english, int currTargetIndex, std::set <int> doneTargetIndexes)
+{
+
+	operations.push_back("_DEL_" + english);
+	currTargetIndex++;
+
+	while(doneTargetIndexes.find(currTargetIndex) != doneTargetIndexes.end())
+	{
+		currTargetIndex++;
+	}
+
+	if (sourceNullWords.find(currTargetIndex) != sourceNullWords.end())
+	{
+			english = currE[currTargetIndex];
+			generateDeleteOperations(english,currTargetIndex,doneTargetIndexes);
+	}
+
+}
+
 void osmHypothesis :: computeOSMFeature(int startIndex , WordsBitmap & coverageVector , Api & ptrOp, int order)
 {
 
-
+	set <int> doneTargetIndexes;
 	set <int> eSide;
 	set <int> fSide;
 	set <int> :: iterator iter;
@@ -378,8 +440,11 @@ void osmHypothesis :: computeOSMFeature(int startIndex , WordsBitmap & coverageV
 	string source;
 	int j1;
 	int start = 0;
+	int targetIndex = 0;
+	doneTargetIndexes.clear();
 
-	if (targetNullWords.size() != 0)
+
+	if (targetNullWords.size() != 0) // Source words to be deleted in the start of this phrase ...
 	{
 		iter = targetNullWords.begin();
 
@@ -393,6 +458,12 @@ void osmHypothesis :: computeOSMFeature(int startIndex , WordsBitmap & coverageV
 		}
 	}
 
+	if (sourceNullWords.find(targetIndex) != sourceNullWords.end()) // first word has to be deleted ...
+	{
+			english = currE[targetIndex];
+			generateDeleteOperations(english,targetIndex, doneTargetIndexes);
+	}
+
 
 	for (int i = 0; i < ceptsInPhrase.size(); i++)
 	{
@@ -403,11 +474,17 @@ void osmHypothesis :: computeOSMFeature(int startIndex , WordsBitmap & coverageV
 		eSide = ceptsInPhrase[i].second;
 
 		iter = eSide.begin();
+		targetIndex = *iter;
 		english += currE[*iter];
 		iter++;
 
 		for (; iter != eSide.end(); iter++)
 		{
+			if(*iter == targetIndex+1)
+				targetIndex++;
+			else
+				doneTargetIndexes.insert(*iter);
+
 			english += "^_^";
 			english += currE[*iter];
 		}
@@ -435,8 +512,21 @@ void osmHypothesis :: computeOSMFeature(int startIndex , WordsBitmap & coverageV
 		     generateOperations(startIndex, j1, 1 , coverageVector , english , source , targetNullWords , currF);
 		}
 
+		targetIndex++; // Check whether the next target word is unaligned ...
+
+		while(doneTargetIndexes.find(targetIndex) != doneTargetIndexes.end())
+		{
+				targetIndex++;
+		}
+
+		if(sourceNullWords.find(targetIndex) != sourceNullWords.end())
+		{
+			english = currE[targetIndex];
+			generateDeleteOperations(english,targetIndex, doneTargetIndexes);
+		}
 	}
 
+	//removeReorderingOperations();
 	calculateOSMProb(ptrOp, order);
 	//print();
 
@@ -479,7 +569,7 @@ void osmHypothesis :: getMeCepts ( set <int> & eSide , set <int> & fSide , map <
 
 }
 
-void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int endIndex)
+void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int endIndex, int targetPhraseLength)
 {
 
 		std::map <int , vector <int> > sT;
@@ -501,11 +591,19 @@ void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int
 			sT[src].push_back(tgt);
 		}
 
-		for (int i = startIndex; i<= endIndex; i++)
+		for (int i = startIndex; i<= endIndex; i++)  // What are unaligned source words in this phrase ...
 		{
 			if (sT.find(i-startIndex) == sT.end())
 			{
 				targetNullWords.insert(i);
+			}
+		}
+
+		for (int i = 0; i < targetPhraseLength; i++)  // What are unaligned target words in this phrase ...
+		{
+			if (tS.find(i) == tS.end())
+			{
+				sourceNullWords.insert(i);
 			}
 		}
 
@@ -537,7 +635,11 @@ void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int
 			ceptsInPhrase.push_back(cept);
 		}
 
+
+
 /*
+
+	  cerr<<"Extracted Cepts "<<endl;
 		for (int i = 0; i < ceptsInPhrase.size(); i++)
 			{
 
@@ -558,6 +660,17 @@ void osmHypothesis :: constructCepts(vector <int> & align , int startIndex , int
 				cerr<<endl;
 			}
 			cerr<<endl;
+
+		cerr<<"Unaligned Target Words"<<endl;
+
+		for (iter = sourceNullWords.begin(); iter != sourceNullWords.end(); iter++)
+			cerr<<*iter<<"<--->"<<endl;
+
+		cerr<<"Unaligned Source Words"<<endl;
+
+		for (iter = targetNullWords.begin(); iter != targetNullWords.end(); iter++)
+			cerr<<*iter<<"<--->"<<endl;
+
 */
 
 }

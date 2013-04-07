@@ -109,7 +109,7 @@ FFState* OpSequenceModel::Evaluate(
 
   //target.GetWord(0)
 
-  /*cerr << target <<" --- "<<target.GetSourcePhrase()<< endl;  // English ...*/
+  //cerr << target <<" --- "<<target.GetSourcePhrase()<< endl;  // English ...
 
   //cerr << align << endl;   // Alignments ...
   //cerr << cur_hypo.GetCurrSourceWordsRange() << endl;
@@ -168,11 +168,8 @@ FFState* OpSequenceModel::Evaluate(
 
 
 
-
-
-
   obj.setState(prev_state);
-  obj.constructCepts(alignments,startIndex,endIndex);
+  obj.constructCepts(alignments,startIndex,endIndex,target.GetSize());
   obj.setPhrases(mySourcePhrase , myTargetPhrase);
   obj.computeOSMFeature(startIndex,myBitmap,*ptrOp,lmOrder);
   obj.populateScores(scores);
