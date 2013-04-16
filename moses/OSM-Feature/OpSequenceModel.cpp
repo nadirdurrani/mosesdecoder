@@ -156,7 +156,7 @@ FFState* OpSequenceModel::Evaluate(
   for (int i = 0; i < target.GetSize(); i++)
   {
 
-	  if (target.GetWord(i).GetFactor(1) != NULL)
+	  if (target.GetWord(i).IsOOV())
 		  myTargetPhrase.push_back("_TRANS_SLF_");
 	  else
 		  myTargetPhrase.push_back(target.GetWord(i).GetFactor(0)->GetString());
